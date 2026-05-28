@@ -15,6 +15,39 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ── MOBILE FIRST ── */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth;}
+body{-webkit-tap-highlight-color:transparent;touch-action:pan-y;}
+button,a,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;}
+input,select,textarea{font-size:16px!important;} /* iOS zoom 방지 */
+.option-btn,.btn-primary,.btn-like,.btn-retry,.btn-submit,.btn-naver,.btn-delivery,.btn-delivery-mini,.btn-copy,.feedback-btn,.retry-opt{min-height:44px;} /* 터치 최소 크기 */
+@media(max-width:480px){
+  .landing-content{padding:40px 20px;}
+  .landing-title{font-size:clamp(2.4rem,10vw,3.5rem);white-space:normal;}
+  .landing-sub{font-size:0.92rem;margin-bottom:32px;}
+  .btn-primary{padding:16px 32px;font-size:1rem;width:100%;justify-content:center;}
+  .onboarding-wrap{padding:0 4px;}
+  .option-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .option-btn{padding:16px 10px;font-size:0.88rem;}
+  .result-wrap{padding:0;}
+  #screen-result{padding:24px 16px 110px;}
+  .result-menu-name{font-size:1.9rem;}
+  .action-row{grid-template-columns:1fr 1fr;gap:10px;}
+  .btn-like,.btn-retry{padding:14px 10px;font-size:0.88rem;}
+  .delivery-btns-mini{gap:6px;}
+  .btn-delivery-mini{padding:12px 4px;font-size:0.76rem;}
+  .return-banner{padding:20px 16px;}
+  .return-banner-title{font-size:1.2rem;}
+  .mypage-wrap{padding:0;}
+  #screen-mypage{padding:32px 16px 100px;}
+  .stat-grid{gap:8px;}
+  .restaurant-card{padding:12px 14px;gap:10px;}
+  .auth-wrap{padding:0;}
+  #screen-auth{padding:32px 16px;}
+  .copy-restaurant-box{flex-direction:column;align-items:flex-start;gap:8px;}
+  .btn-copy{width:100%;}
+}
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;flex-direction:column;}
 
@@ -264,7 +297,25 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 /* TOAST */
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:100px;font-size:0.82rem;font-weight:600;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;z-index:1000;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* MOBILE OPTIMIZATIONS */
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+body{-webkit-tap-highlight-color:transparent;}
+button,a,[onclick]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;}
+.input-field,.retry-etc-input,.name-edit-input{font-size:16px!important;}
+input,select,textarea{font-size:16px!important;}
+.option-btn,.btn-primary,.btn-like,.btn-retry,.btn-submit,.btn-naver,.btn-delivery,.btn-delivery-mini,.btn-copy,.feedback-btn,.retry-opt{min-height:44px;}
+@supports(height:100dvh){
+  .screen,.screen.active{min-height:100dvh;}
+}
+@media(max-width:400px){
+  .landing-title{white-space:normal;font-size:clamp(2.4rem,10vw,4rem);}
+  .option-grid{grid-template-columns:repeat(2,1fr);}
+  .delivery-btns-mini{gap:6px;}
+  .btn-delivery-mini{font-size:0.74rem;padding:11px 4px;}
+}
 </style>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -596,13 +647,127 @@ const menus = [
   {name:'오니기리',emoji:'🍙',tags:['#일식','#간편','#간식'],reason:'작지만 알찬 한 끼. 참기름과 소금이 밴 주먹밥 하나면 충분히 행복해질 수 있어요.',suitableFor:['아침','간식'],category:'일식',lightness:1,spicy:1,restaurants:[{name:'오니기리와이규동 강남',rating:4.6,dist:'200m',reviews:1800},{name:'하나마루 우동 강남',rating:4.5,dist:'420m',reviews:1200},{name:'스낵 재팬 서초',rating:4.4,dist:'650m',reviews:780}]},
   {name:'리조또',emoji:'🍚',tags:['#양식','#크리미','#든든'],reason:'쌀이 크림 소스를 머금어 촉촉해지는 리조또. 이탈리아 느낌으로 오늘을 마무리해봐요.',suitableFor:['점심','저녁'],category:'양식',lightness:3,spicy:1,restaurants:[{name:'라보엠 파스타 강남',rating:4.8,dist:'390m',reviews:1560},{name:'이탈리안 키친 강남',rating:4.6,dist:'630m',reviews:980},{name:'카페 봉주르 서초',rating:4.5,dist:'860m',reviews:720}]},
   {name:'브런치',emoji:'🍳',tags:['#양식','#주말','#여유'],reason:'여유로운 주말 아침엔 역시 브런치죠. 따뜻한 에그베네딕트 한 접시로 특별하게 시작해요.',suitableFor:['아침','간식'],category:'양식',lightness:2,spicy:1,restaurants:[{name:'카페 봉주르 서초',rating:4.7,dist:'360m',reviews:1400},{name:'더브런치 강남점',rating:4.8,dist:'590m',reviews:1100},{name:'오전 열 시 강남',rating:4.6,dist:'820m',reviews:860}]},
+
+  // ── 추가 메뉴 ──
+  {name:'제육볶음',emoji:'🥩',tags:['#한식','#매콤달콤','#밥도둑'],reason:'빨간 양념에 쫄깃하게 볶아진 돼지고기, 밥 위에 올리면 두 공기도 거뜬해요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'제육볶음 본점 강남',rating:4.8,dist:'290m',reviews:1800},{name:'돼지랑쌀이랑 서초',rating:4.6,dist:'520m',reviews:1400},{name:'이모네 제육 강남',rating:4.5,dist:'780m',reviews:1100}]},
+  {name:'육개장',emoji:'🍲',tags:['#한식','#얼큰','#보양식'],reason:'쫀득한 고기에 얼큰한 국물, 대파 향이 가득한 육개장. 속이 확 풀려요.',suitableFor:['아침','점심','저녁'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'육개장 전문 강남',rating:4.8,dist:'350m',reviews:1600},{name:'이문설농탕 강남점',rating:4.7,dist:'580m',reviews:2100},{name:'본가 육개장 서초',rating:4.5,dist:'830m',reviews:980}]},
+  {name:'닭볶음탕',emoji:'🍗',tags:['#한식','#매콤','#얼큰'],reason:'뚝배기에 자작하게 끓인 매콤한 닭볶음탕. 감자랑 같이 퍼먹으면 최고예요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:4,restaurants:[{name:'닭볶음탕 달인 강남',rating:4.7,dist:'310m',reviews:1400},{name:'정남이네 강남점',rating:4.6,dist:'560m',reviews:1100},{name:'매콤한닭 서초점',rating:4.5,dist:'820m',reviews:870}]},
+  {name:'부대찌개',emoji:'🫕',tags:['#한식','#얼큰','#푸짐'],reason:'햄, 소시지, 라면이 어우러진 걸쭉한 부대찌개. 푸짐하고 얼큰해서 기분이 든든해져요.',suitableFor:['점심','저녁'],category:'한식',lightness:4,spicy:3,restaurants:[{name:'의정부부대찌개 강남',rating:4.8,dist:'380m',reviews:2200},{name:'존슨부대찌개 서초',rating:4.6,dist:'610m',reviews:1700},{name:'캠프 부대찌개 강남',rating:4.5,dist:'870m',reviews:1300}]},
+  {name:'감자탕',emoji:'🍖',tags:['#한식','#든든','#뼈다귀'],reason:'뼈 사이사이 쏙쏙 파먹는 감자탕. 걸쭉한 국물에 밥 말아 먹으면 진짜 행복이에요.',suitableFor:['점심','저녁','야식'],category:'한식',lightness:4,spicy:3,restaurants:[{name:'뼈다귀 감자탕 강남',rating:4.7,dist:'420m',reviews:1300},{name:'청담감자탕 강남점',rating:4.6,dist:'650m',reviews:1000},{name:'진한국물 감자탕 서초',rating:4.5,dist:'920m',reviews:780}]},
+  {name:'낙지볶음',emoji:'🦑',tags:['#한식','#매콤','#해산물'],reason:'탱탱한 낙지에 매콤한 양념이 찰떡궁합이에요. 참기름 한 방울 더하면 완성이에요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:4,restaurants:[{name:'목포낙지 강남본점',rating:4.8,dist:'410m',reviews:1700},{name:'낙지사랑 서초점',rating:4.6,dist:'640m',reviews:1300},{name:'세발낙지 강남점',rating:4.5,dist:'900m',reviews:950}]},
+  {name:'오징어볶음',emoji:'🦑',tags:['#한식','#매콤달콤','#밥도둑'],reason:'쫄깃한 오징어에 매콤달콤한 양념, 부추까지 더하면 밥 한 그릇 순삭이에요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'오징어 볶음 달인 강남',rating:4.7,dist:'370m',reviews:1200},{name:'해산물 식당 서초',rating:4.6,dist:'590m',reviews:980},{name:'강남 바다이야기',rating:4.5,dist:'850m',reviews:760}]},
+  {name:'불고기',emoji:'🥩',tags:['#한식','#달콤짭짤','#정식'],reason:'배 육수에 재워진 달콤짭짤한 불고기. 기교 없는 맛인데 언제나 끌리는 이유가 있어요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:1,restaurants:[{name:'불고기브라더스 강남',rating:4.7,dist:'320m',reviews:2100},{name:'종로불고기 강남점',rating:4.6,dist:'550m',reviews:1600},{name:'황소불고기 서초',rating:4.5,dist:'800m',reviews:1200}]},
+  {name:'잡채',emoji:'🍜',tags:['#한식','#명절','#당면'],reason:'쫄깃한 당면에 형형색색 채소, 소고기까지. 잡채는 언제 먹어도 기분이 좋아지는 음식이에요.',suitableFor:['점심','저녁'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'한정식 풀향기 강남',rating:4.8,dist:'460m',reviews:1400},{name:'종로한정식 강남',rating:4.6,dist:'680m',reviews:1100},{name:'명가 한정식 서초',rating:4.5,dist:'930m',reviews:850}]},
+  {name:'족발',emoji:'🐷',tags:['#한식','#야식','#술안주'],reason:'쫄깃하고 탱탱한 족발에 새우젓을 곁들이면 이게 바로 야식의 정석이에요.',suitableFor:['저녁','야식'],category:'한식',lightness:4,spicy:1,restaurants:[{name:'장충동족발 강남점',rating:4.9,dist:'290m',reviews:3100},{name:'원조족발 서초',rating:4.7,dist:'510m',reviews:2400},{name:'직화족발 강남본점',rating:4.6,dist:'760m',reviews:1700}]},
+  {name:'돼지국밥',emoji:'🥣',tags:['#한식','#해장','#부산식'],reason:'진하게 우려낸 돼지뼈 국물, 얇게 썬 수육까지. 부산 감성 그대로예요.',suitableFor:['아침','점심'],category:'한식',lightness:3,spicy:1,restaurants:[{name:'송정 돼지국밥 강남',rating:4.8,dist:'360m',reviews:1900},{name:'부산 돼지국밥 서초',rating:4.7,dist:'590m',reviews:1500},{name:'돼지국밥 달인 강남',rating:4.5,dist:'840m',reviews:1100}]},
+  {name:'청국장',emoji:'🫕',tags:['#한식','#건강','#구수함'],reason:'발효된 콩의 구수하고 깊은 향, 청국장 한 그릇이면 속이 편안해져요.',suitableFor:['아침','점심','저녁'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'청국장 전문 강남',rating:4.7,dist:'400m',reviews:1100},{name:'두부마을 서초점',rating:4.6,dist:'630m',reviews:870},{name:'시골밥상 강남본점',rating:4.5,dist:'880m',reviews:680}]},
+  {name:'두부김치',emoji:'🥢',tags:['#한식','#술안주','#간단'],reason:'뜨거운 두부와 볶은 김치의 조합. 소주 한 잔에 이보다 완벽한 안주는 없어요.',suitableFor:['저녁','야식'],category:'한식',lightness:2,spicy:2,restaurants:[{name:'두부마을 강남점',rating:4.7,dist:'320m',reviews:1300},{name:'종갓집 두부 서초',rating:4.6,dist:'550m',reviews:1000},{name:'두부김치 본가 강남',rating:4.5,dist:'800m',reviews:780}]},
+  {name:'쌈밥',emoji:'🥬',tags:['#한식','#건강','#구색'],reason:'신선한 쌈채소에 밥 한 숟가락, 고추장 살짝. 건강하게 배부른 한 끼예요.',suitableFor:['점심','저녁'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'쌈밥 전문 강남',rating:4.7,dist:'390m',reviews:1400},{name:'들판 쌈밥 서초',rating:4.6,dist:'610m',reviews:1100},{name:'나물 쌈밥 강남점',rating:4.5,dist:'870m',reviews:850}]},
+  {name:'수제비',emoji:'🍲',tags:['#한식','#구수함','#손맛'],reason:'손으로 뜯어 넣은 반죽이 들어간 구수한 수제비. 멸치 육수와 함께면 최고예요.',suitableFor:['아침','점심'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'수제비 달인 강남',rating:4.8,dist:'400m',reviews:1600},{name:'칼제비 강남점',rating:4.6,dist:'630m',reviews:1200},{name:'손맛 수제비 서초',rating:4.5,dist:'880m',reviews:900}]},
+  {name:'곰탕',emoji:'🍲',tags:['#한식','#해장','#진한국물'],reason:'진하게 우려낸 사골 국물에 수육 한 점. 아무 말 없이 그냥 위로가 되는 음식이에요.',suitableFor:['아침','점심','저녁'],category:'한식',lightness:3,spicy:1,restaurants:[{name:'하동관 강남점',rating:4.9,dist:'480m',reviews:4100},{name:'곰탕 달인 강남',rating:4.7,dist:'720m',reviews:2300},{name:'전통 곰탕 서초',rating:4.5,dist:'960m',reviews:1100}]},
+  {name:'떡국',emoji:'🍲',tags:['#한식','#명절','#담백함'],reason:'맑고 담백한 사골 국물에 떡 한 점. 속이 편안하고 따뜻해지는 음식이에요.',suitableFor:['아침','점심'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'진미식당 강남점',rating:4.7,dist:'380m',reviews:1600},{name:'한양집 서초점',rating:4.6,dist:'600m',reviews:1200},{name:'전통 떡국 강남',rating:4.5,dist:'850m',reviews:900}]},
+  {name:'어묵탕',emoji:'🍢',tags:['#분식','#겨울','#따뜻함'],reason:'길거리에서 마시던 어묵 국물 한 모금. 그 따뜻함이 그리울 때 딱이에요.',suitableFor:['간식','야식'],category:'분식',lightness:1,spicy:1,restaurants:[{name:'포장마차 어묵 강남',rating:4.6,dist:'280m',reviews:1200},{name:'부산어묵 강남점',rating:4.7,dist:'490m',reviews:980},{name:'오뎅식당 서초본점',rating:4.5,dist:'730m',reviews:750}]},
+  {name:'치즈볶이',emoji:'🧀',tags:['#분식','#치즈','#매콤달콤'],reason:'쫄깃한 떡볶이에 녹진하게 녹은 치즈. 비주얼부터 맛까지 완벽한 조합이에요.',suitableFor:['간식','야식','저녁'],category:'분식',lightness:2,spicy:3,restaurants:[{name:'치즈 떡볶이 본점 강남',rating:4.8,dist:'250m',reviews:2100},{name:'연남 치즈볶이 강남',rating:4.6,dist:'470m',reviews:1700},{name:'달달한 분식 서초',rating:4.5,dist:'720m',reviews:1300}]},
+  {name:'군만두',emoji:'🥟',tags:['#분식','#바삭','#간식'],reason:'바삭하게 구워진 만두 한 입. 초간장에 찍어 먹으면 멈출 수가 없어요.',suitableFor:['간식','야식'],category:'분식',lightness:2,spicy:1,restaurants:[{name:'만두사랑 강남점',rating:4.7,dist:'310m',reviews:1600},{name:'왕만두 서초본점',rating:4.6,dist:'540m',reviews:1300},{name:'군만두 달인 강남',rating:4.5,dist:'790m',reviews:980}]},
+  {name:'핫도그',emoji:'🌭',tags:['#분식','#간식','#치즈'],reason:'바삭한 튀김옷에 쭉 늘어나는 치즈. 걸어다니며 먹어도, 앉아 먹어도 맛있어요.',suitableFor:['간식','야식'],category:'분식',lightness:2,spicy:1,restaurants:[{name:'명랑핫도그 강남점',rating:4.7,dist:'190m',reviews:3400},{name:'두끼 핫도그 강남',rating:4.5,dist:'420m',reviews:2100},{name:'왕핫도그 서초점',rating:4.4,dist:'660m',reviews:1500}]},
+  {name:'짬뽕',emoji:'🍜',tags:['#중식','#얼큰','#해산물'],reason:'짬뽕 국물 한 모금이면 모든 피로가 날아가요. 오늘 같은 날 딱 이 맛이에요.',suitableFor:['점심','저녁'],category:'중식',lightness:3,spicy:3,restaurants:[{name:'홍콩반점0410 강남점',rating:4.8,dist:'350m',reviews:1240},{name:'짬뽕지존 서초점',rating:4.6,dist:'580m',reviews:970},{name:'차이나팩토리 강남',rating:4.5,dist:'820m',reviews:760}]},
+  {name:'볶음밥',emoji:'🍳',tags:['#중식','#간편','#고소함'],reason:'계란이 고슬고슬하게 볶아진 볶음밥. 단순하지만 이 맛을 이길 건 없어요.',suitableFor:['점심','저녁','야식'],category:'중식',lightness:2,spicy:1,restaurants:[{name:'홍콩반점0410 강남점',rating:4.8,dist:'350m',reviews:1240},{name:'중화루 볶음밥 강남',rating:4.6,dist:'600m',reviews:870},{name:'사천성 강남본점',rating:4.5,dist:'850m',reviews:650}]},
+  {name:'깐풍기',emoji:'🍗',tags:['#중식','#매콤달콤','#바삭'],reason:'바삭하게 튀긴 닭에 매콤달콤한 깐풍 소스. 맥주 안주로도, 밥반찬으로도 완벽해요.',suitableFor:['점심','저녁'],category:'중식',lightness:3,spicy:3,restaurants:[{name:'차이나팩토리 강남점',rating:4.7,dist:'420m',reviews:1100},{name:'중화요리 향미 강남',rating:4.6,dist:'660m',reviews:890},{name:'북경반점 강남점',rating:4.5,dist:'900m',reviews:680}]},
+  {name:'마파두부',emoji:'🫕',tags:['#중식','#마라','#얼큰'],reason:'두부가 마라 소스에 촉촉하게 배인 마파두부. 밥에 얹으면 한 그릇 순삭이에요.',suitableFor:['점심','저녁'],category:'중식',lightness:2,spicy:4,restaurants:[{name:'마라하오 강남점',rating:4.7,dist:'260m',reviews:1800},{name:'사천성 마파두부 강남',rating:4.6,dist:'490m',reviews:1400},{name:'중화풍경 서초점',rating:4.5,dist:'740m',reviews:1000}]},
+  {name:'타코야키',emoji:'🐙',tags:['#일식','#간식','#문어'],reason:'겉은 바삭, 속은 촉촉한 타코야키. 마요네즈에 가쓰오부시까지 올라가면 비주얼 완성이에요.',suitableFor:['간식','야식'],category:'일식',lightness:1,spicy:1,restaurants:[{name:'타코야키 본점 강남',rating:4.7,dist:'300m',reviews:1400},{name:'오사카 타코야키 강남',rating:4.6,dist:'540m',reviews:1100},{name:'일본 분식 서초점',rating:4.5,dist:'780m',reviews:850}]},
+  {name:'가츠동',emoji:'🍱',tags:['#일식','#든든','#덮밥'],reason:'바삭한 돈카츠와 계란이 만난 가츠동. 달콤짭짤한 국물이 밥과 완벽하게 어우러져요.',suitableFor:['점심','저녁'],category:'일식',lightness:3,spicy:1,restaurants:[{name:'요시노야 강남점',rating:4.5,dist:'160m',reviews:3400},{name:'가츠야 강남점',rating:4.8,dist:'300m',reviews:1600},{name:'돈부리아 서초점',rating:4.6,dist:'580m',reviews:1200}]},
+  {name:'장어덮밥',emoji:'🐟',tags:['#일식','#보양식','#특별한날'],reason:'달콤한 타레 소스에 구워진 장어 한 점. 몸 보양도 되고 맛도 최고예요.',suitableFor:['점심','저녁'],category:'일식',lightness:3,spicy:1,restaurants:[{name:'우나동 강남점',rating:4.8,dist:'480m',reviews:1200},{name:'장어집 강남본점',rating:4.7,dist:'710m',reviews:950},{name:'청담 우나기 서초',rating:4.6,dist:'950m',reviews:780}]},
+  {name:'연어덮밥',emoji:'🍱',tags:['#일식','#신선함','#건강'],reason:'신선한 연어가 밥 위에 가득. 아보카도까지 더하면 포케볼 느낌으로 즐길 수 있어요.',suitableFor:['점심','저녁'],category:'일식',lightness:2,spicy:1,restaurants:[{name:'연어랑밥이랑 강남',rating:4.8,dist:'350m',reviews:1700},{name:'스시야 강남점',rating:4.7,dist:'580m',reviews:1300},{name:'오마카세 서초점',rating:4.6,dist:'820m',reviews:980}]},
+  {name:'카레',emoji:'🍛',tags:['#양식','#든든','#향긋함'],reason:'풍부한 향신료가 어우러진 카레 한 그릇. 밥에 듬뿍 얹어 먹으면 뱃속이 든든해져요.',suitableFor:['점심','저녁'],category:'양식',lightness:3,spicy:2,restaurants:[{name:'코코이찌방야 강남',rating:4.6,dist:'280m',reviews:2100},{name:'인도카레 강남점',rating:4.7,dist:'510m',reviews:1600},{name:'카레밥 달인 서초',rating:4.5,dist:'760m',reviews:1200}]},
+  {name:'타코',emoji:'🌮',tags:['#양식','#멕시칸','#간편'],reason:'바삭한 또르띠야에 고기, 살사, 아보카도. 한 입에 여러 맛이 폭발하는 행복함이에요.',suitableFor:['점심','저녁','간식'],category:'양식',lightness:2,spicy:2,restaurants:[{name:'타코벨 강남점',rating:4.4,dist:'310m',reviews:2800},{name:'멕시칸 그릴 강남',rating:4.6,dist:'540m',reviews:1300},{name:'칠리스 강남점',rating:4.5,dist:'790m',reviews:1000}]},
+  {name:'부리또',emoji:'🌯',tags:['#양식','#멕시칸','#든든'],reason:'크게 한 입 베어 물면 라이스, 고기, 치즈가 한꺼번에 느껴지는 부리또. 배부르고 맛있어요.',suitableFor:['점심','저녁'],category:'양식',lightness:3,spicy:2,restaurants:[{name:'타코벨 강남점',rating:4.4,dist:'310m',reviews:2800},{name:'에쎄 멕시칸 강남',rating:4.7,dist:'560m',reviews:1100},{name:'과카몰리 서초점',rating:4.6,dist:'810m',reviews:890}]},
+  {name:'오믈렛',emoji:'🥚',tags:['#양식','#아침','#브런치'],reason:'폭신폭신하게 부쳐진 오믈렛. 안에 뭘 넣든 완성되는 순간 행복감이 밀려와요.',suitableFor:['아침','간식'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'에그앤브런치 강남',rating:4.7,dist:'330m',reviews:1400},{name:'모닝 플레이트 서초',rating:4.8,dist:'560m',reviews:1100},{name:'브런치 하우스 강남',rating:4.6,dist:'800m',reviews:870}]},
+  {name:'크림수프',emoji:'🍲',tags:['#양식','#따뜻함','#부드러움'],reason:'진하고 부드러운 크림수프 한 그릇. 차가운 날 몸과 마음을 동시에 녹여줘요.',suitableFor:['아침','점심'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'수프앤빵 강남',rating:4.7,dist:'350m',reviews:1200},{name:'파네에살루메 강남',rating:4.6,dist:'590m',reviews:950},{name:'브레드앤버터 서초',rating:4.5,dist:'830m',reviews:730}]},
+  {name:'쌀국수',emoji:'🍜',tags:['#베트남','#담백함','#건강'],reason:'맑은 쌀국수 국물에 숙주와 바질. 가볍고 깔끔하게 먹고 싶을 때 딱이에요.',suitableFor:['점심','저녁'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'포친 강남점',rating:4.8,dist:'380m',reviews:2100},{name:'쌀국수 강남점',rating:4.6,dist:'600m',reviews:1600},{name:'베트남 포 서초',rating:4.7,dist:'840m',reviews:1200}]},
+  {name:'팟타이',emoji:'🍜',tags:['#태국','#달콤새콤','#이국적'],reason:'새콤달콤한 소스에 쫄깃한 면, 새우까지. 이국적인 맛으로 일상을 환기시켜줘요.',suitableFor:['점심','저녁'],category:'양식',lightness:2,spicy:2,restaurants:[{name:'타이거 타이 강남',rating:4.7,dist:'420m',reviews:1400},{name:'방콕 스트리트 서초',rating:4.6,dist:'650m',reviews:1100},{name:'코코넛 타이 강남',rating:4.5,dist:'900m',reviews:870}]},
+  {name:'로제파스타',emoji:'🍝',tags:['#양식','#크리미','#매콤'],reason:'크림과 토마토가 만나 탄생한 로제 소스. 부드러우면서 약간 매콤한 그 맛이 중독돼요.',suitableFor:['점심','저녁'],category:'양식',lightness:3,spicy:2,restaurants:[{name:'파스타 이야기 강남',rating:4.8,dist:'390m',reviews:1800},{name:'바베리니 강남점',rating:4.6,dist:'620m',reviews:1300},{name:'아르떼 파스타 강남',rating:4.7,dist:'860m',reviews:990}]},
+  {name:'함박스테이크',emoji:'🍖',tags:['#양식','#일식','#든든'],reason:'육즙 가득한 함박스테이크에 데미글라스 소스. 밥이랑 먹으면 든든하고 기분도 좋아져요.',suitableFor:['점심','저녁'],category:'양식',lightness:3,spicy:1,restaurants:[{name:'함박 스테이크 강남',rating:4.7,dist:'430m',reviews:1300},{name:'미트볼앤함박 서초',rating:4.6,dist:'660m',reviews:1000},{name:'도쿄 함박 강남점',rating:4.8,dist:'900m',reviews:800}]},
+  {name:'간장치킨',emoji:'🍗',tags:['#치킨','#달콤짭짤','#야식'],reason:'달콤짭짤한 간장 소스가 촉촉하게 배어든 간장치킨. 맥주랑 먹으면 진짜 천국이에요.',suitableFor:['야식','저녁'],category:'치킨',lightness:3,spicy:1,restaurants:[{name:'교촌치킨 역삼점',rating:4.8,dist:'320m',reviews:2410},{name:'처갓집 간장 강남',rating:4.7,dist:'550m',reviews:1900},{name:'굽네치킨 서초점',rating:4.6,dist:'790m',reviews:1500}]},
+  {name:'파닭',emoji:'🍗',tags:['#치킨','#파채','#야식'],reason:'바삭한 치킨 위에 쌓인 파채 한 줌. 고소하고 시원한 맛이 환상적이에요.',suitableFor:['야식','저녁'],category:'치킨',lightness:3,spicy:1,restaurants:[{name:'파닭 전문 강남',rating:4.7,dist:'290m',reviews:1800},{name:'파닭이최고야 서초',rating:4.6,dist:'510m',reviews:1400},{name:'치킨마루 강남점',rating:4.5,dist:'760m',reviews:1100}]},
+  {name:'허니버터치킨',emoji:'🍯',tags:['#치킨','#달콤','#야식'],reason:'달콤한 허니버터 소스가 치킨 위에 쫙 코팅되면 손이 멈추질 않아요.',suitableFor:['야식','저녁'],category:'치킨',lightness:3,spicy:1,restaurants:[{name:'bhc치킨 강남점',rating:4.7,dist:'280m',reviews:2100},{name:'BBQ 강남직영점',rating:4.6,dist:'500m',reviews:1800},{name:'처갓집 강남역',rating:4.5,dist:'750m',reviews:1400}]},
+
+  // ── 한식 추가 ──
+  {name:'부대찌개',emoji:'🫕',tags:['#한식','#얼큰','#술안주'],reason:'햄, 소시지, 라면 사리까지 한꺼번에 끓이는 부대찌개. 먹을수록 손이 가는 마성의 맛이에요.',suitableFor:['점심','저녁','야식'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'의정부 부대찌개 강남',rating:4.8,dist:'310m',reviews:2300},{name:'박가네 부대찌개 서초',rating:4.7,dist:'540m',reviews:1800},{name:'존슨부대찌개 강남',rating:4.6,dist:'780m',reviews:1400}]},
+  {name:'해장국',emoji:'🍲',tags:['#한식','#해장','#아침'],reason:'속풀이엔 역시 뜨끈한 해장국이죠. 선지와 콩나물이 어우러진 국물 한 모금이면 다 OK예요.',suitableFor:['아침','점심'],category:'한식',lightness:3,spicy:2,restaurants:[{name:'청진동 해장국 강남',rating:4.8,dist:'360m',reviews:2800},{name:'강남 콩나물해장국',rating:4.7,dist:'590m',reviews:2100},{name:'뼈해장국 서초본점',rating:4.6,dist:'840m',reviews:1600}]},
+  {name:'낙지볶음',emoji:'🦑',tags:['#한식','#해산물','#매콤'],reason:'꼬들꼬들한 낙지가 매콤한 양념에 볶아지면, 밥 한 그릇은 기본이에요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:4,restaurants:[{name:'연포탕 낙지 강남',rating:4.8,dist:'400m',reviews:1700},{name:'목포낙지 서초점',rating:4.7,dist:'630m',reviews:1300},{name:'마포낙지 강남점',rating:4.6,dist:'870m',reviews:1000}]},
+  {name:'쭈꾸미볶음',emoji:'🐙',tags:['#한식','#매콤','#야식'],reason:'쫄깃한 쭈꾸미에 매콤한 양념, 삼겹살까지 함께 볶으면 진짜 참을 수 없는 맛이에요.',suitableFor:['점심','저녁','야식'],category:'한식',lightness:3,spicy:4,restaurants:[{name:'쭈꾸미볶음 강남본점',rating:4.8,dist:'350m',reviews:1900},{name:'매운쭈꾸미 서초점',rating:4.6,dist:'580m',reviews:1500},{name:'원조쭈꾸미 강남역',rating:4.5,dist:'820m',reviews:1200}]},
+  {name:'감자탕',emoji:'🍖',tags:['#한식','#해장','#든든'],reason:'돼지 등뼈가 푹 고아진 감자탕. 뼈에서 발라먹는 재미까지, 이보다 든든한 한 끼는 없어요.',suitableFor:['아침','점심','저녁'],category:'한식',lightness:4,spicy:2,restaurants:[{name:'뼈다귀 해장국 강남',rating:4.8,dist:'420m',reviews:2200},{name:'감자탕 전문 서초',rating:4.7,dist:'650m',reviews:1700},{name:'등뼈 감자탕 강남점',rating:4.5,dist:'900m',reviews:1300}]},
+  {name:'돼지국밥',emoji:'🥣',tags:['#한식','#부산','#든든'],reason:'부산식 돼지국밥 한 그릇. 진한 국물에 수육이 가득, 새우젓으로 간 맞추면 그게 진짜 맛이에요.',suitableFor:['아침','점심'],category:'한식',lightness:3,spicy:1,restaurants:[{name:'부산돼지국밥 강남',rating:4.8,dist:'290m',reviews:3100},{name:'하동 돼지국밥 서초',rating:4.7,dist:'520m',reviews:2400},{name:'밀양 돼지국밥 강남',rating:4.6,dist:'770m',reviews:1800}]},
+  {name:'콩국수',emoji:'🍜',tags:['#한식','#여름','#고소함'],reason:'고소한 콩 국물이 쫄깃한 국수와 만났어요. 여름철 최고의 보양식이에요.',suitableFor:['점심'],category:'한식',lightness:1,spicy:1,restaurants:[{name:'진주회관 강남점',rating:4.8,dist:'340m',reviews:2600},{name:'콩국수 달인 강남',rating:4.7,dist:'570m',reviews:1900},{name:'고소한 콩국수 서초',rating:4.6,dist:'810m',reviews:1400}]},
+  {name:'수육',emoji:'🥩',tags:['#한식','#담백','#보쌈'],reason:'부드럽게 삶아진 수육 한 점에 새우젓 살짝. 기름기 없이 담백한 이 맛을 한번 보시면 계속 생각나요.',suitableFor:['점심','저녁'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'원조 평양집 강남',rating:4.8,dist:'450m',reviews:1800},{name:'수육 전문 강남점',rating:4.6,dist:'680m',reviews:1400},{name:'강남 수육나라',rating:4.5,dist:'910m',reviews:1000}]},
+  {name:'묵은지 김치찜',emoji:'🫕',tags:['#한식','#묵은지','#깊은맛'],reason:'잘 익은 묵은 김치와 돼지고기의 만남. 오래 끓일수록 깊어지는 맛, 한 번 먹으면 중독돼요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'묵은지 전문 강남',rating:4.8,dist:'380m',reviews:1600},{name:'오모가리 묵은지 서초',rating:4.7,dist:'600m',reviews:1300},{name:'이씨네 김치찜 강남',rating:4.5,dist:'850m',reviews:1000}]},
+  {name:'간장게장',emoji:'🦀',tags:['#한식','#밥도둑','#특별한날'],reason:'"밥도둑"이라 불리는 이유가 있죠. 달콤짭짤한 간장이 밴 게장 한 점이면 밥 두 그릇은 기본이에요.',suitableFor:['점심','저녁'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'신전 간장게장 강남',rating:4.9,dist:'480m',reviews:2800},{name:'강남 게장 본가',rating:4.7,dist:'710m',reviews:2100},{name:'서울 게장 서초점',rating:4.6,dist:'950m',reviews:1600}]},
+  {name:'꽃게탕',emoji:'🦀',tags:['#한식','#해산물','#얼큰'],reason:'꽃게의 진한 내장이 우러난 얼큰한 국물. 게살 발라먹는 재미까지, 시간 가는 줄 모르는 한 끼예요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'노량진 꽃게 강남점',rating:4.8,dist:'430m',reviews:1900},{name:'바다 꽃게탕 서초',rating:4.7,dist:'660m',reviews:1500},{name:'꽃게 전문 강남본점',rating:4.6,dist:'900m',reviews:1200}]},
+  {name:'닭볶음탕',emoji:'🍗',tags:['#한식','#매콤','#가족'],reason:'매콤달콤한 양념에 닭고기가 폭신하게 익었어요. 감자와 당근까지 함께 먹으면 반찬이 따로 필요 없어요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'닭볶음탕 전문 강남',rating:4.7,dist:'380m',reviews:1700},{name:'춘천닭갈비 강남점',rating:4.6,dist:'600m',reviews:1400},{name:'매운닭 서초점',rating:4.5,dist:'830m',reviews:1100}]},
+  {name:'홍어삼합',emoji:'🐟',tags:['#한식','#전라도','#막걸리'],reason:'삭힌 홍어, 수육, 묵은 김치의 삼합. 처음엔 낯설어도 한 번 맛보면 왜 최고인지 알게 돼요.',suitableFor:['저녁'],category:'한식',lightness:3,spicy:2,restaurants:[{name:'목포 홍어 강남점',rating:4.7,dist:'510m',reviews:1300},{name:'전라도 홍어 서초',rating:4.6,dist:'750m',reviews:1000},{name:'홍어 전문 강남본점',rating:4.8,dist:'970m',reviews:850}]},
+  {name:'돼지갈비',emoji:'🍖',tags:['#한식','#고기','#달콤'],reason:'달콤한 양념이 베어든 돼지갈비. 직화로 구워 먹으면 바삭한 겉면과 촉촉한 속이 환상이에요.',suitableFor:['점심','저녁'],category:'한식',lightness:4,spicy:1,restaurants:[{name:'고기싸롱 강남점',rating:4.8,dist:'280m',reviews:2100},{name:'명인 갈비 서초점',rating:4.7,dist:'510m',reviews:1700},{name:'강남 갈비명가',rating:4.6,dist:'760m',reviews:1300}]},
+
+  // ── 분식 추가 ──
+  {name:'떡국',emoji:'🍲',tags:['#한식','#명절','#새해'],reason:'쫄깃한 가래떡이 맑은 육수에 둥둥 떠 있는 떡국. 계절 상관없이 먹으면 왠지 마음이 따뜻해져요.',suitableFor:['아침','점심'],category:'분식',lightness:2,spicy:1,restaurants:[{name:'강남 떡국 본점',rating:4.7,dist:'320m',reviews:1400},{name:'진한 사골 떡국 서초',rating:4.6,dist:'550m',reviews:1100},{name:'조선 떡국 강남점',rating:4.5,dist:'790m',reviews:850}]},
+  {name:'어묵탕',emoji:'🍢',tags:['#분식','#겨울','#포장마차'],reason:'뜨끈한 어묵 국물 한 입. 겨울 포차에서 먹으면 그 따뜻함이 손끝에서 뱃속까지 퍼져요.',suitableFor:['간식','야식','저녁'],category:'분식',lightness:1,spicy:1,restaurants:[{name:'신마포 어묵탕 강남',rating:4.7,dist:'290m',reviews:1600},{name:'부산 어묵탕 서초점',rating:4.6,dist:'520m',reviews:1300},{name:'진미 어묵 강남점',rating:4.5,dist:'760m',reviews:1000}]},
+  {name:'튀김',emoji:'🍤',tags:['#분식','#바삭','#간식'],reason:'바삭하게 튀겨진 각종 튀김. 고추, 오징어, 새우까지 골라 먹는 재미가 있어요.',suitableFor:['간식','야식'],category:'분식',lightness:2,spicy:1,restaurants:[{name:'원조 튀김 강남점',rating:4.7,dist:'210m',reviews:1800},{name:'광장 튀김 서초본점',rating:4.6,dist:'440m',reviews:1500},{name:'신전 튀김 강남역',rating:4.5,dist:'680m',reviews:1200}]},
+  {name:'잡채',emoji:'🍜',tags:['#한식','#명절','#쫄깃'],reason:'당면과 채소, 고기가 어우러진 잡채. 참기름 향이 더해져 젓가락이 멈추지 않아요.',suitableFor:['점심','저녁'],category:'한식',lightness:2,spicy:1,restaurants:[{name:'잡채 전문 강남',rating:4.7,dist:'370m',reviews:1200},{name:'가정식 반찬 서초',rating:4.6,dist:'600m',reviews:950},{name:'한식 뷔페 강남점',rating:4.5,dist:'840m',reviews:1600}]},
+  {name:'라볶이',emoji:'🌶️',tags:['#분식','#매콤','#간식'],reason:'라면과 떡볶이의 환상적인 조합. 라면 사리가 매콤한 소스를 머금으면 진짜 끊을 수 없어요.',suitableFor:['간식','야식','저녁'],category:'분식',lightness:2,spicy:4,restaurants:[{name:'신전 떡볶이 강남역',rating:4.7,dist:'190m',reviews:2200},{name:'죠스떡볶이 서초점',rating:4.6,dist:'430m',reviews:1700},{name:'즉석 라볶이 강남',rating:4.5,dist:'670m',reviews:1300}]},
+
+  // ── 중식 추가 ──
+  {name:'굴소스 볶음밥',emoji:'🍳',tags:['#중식','#고소함','#든든'],reason:'굴소스의 진한 감칠맛이 밥알 하나하나에 배어드는 볶음밥. 계란 올리면 완성이에요.',suitableFor:['점심','저녁'],category:'중식',lightness:2,spicy:1,restaurants:[{name:'차이나팩토리 강남점',rating:4.7,dist:'420m',reviews:1100},{name:'중화루 강남점',rating:4.6,dist:'650m',reviews:980},{name:'중화요리 향미 강남',rating:4.5,dist:'890m',reviews:760}]},
+  {name:'짬뽕밥',emoji:'🍚',tags:['#중식','#매콤','#해물'],reason:'짬뽕 국물에 밥 말아먹는 그 맛. 해산물과 채소가 가득한 얼큰한 국물이 밥을 부르죠.',suitableFor:['점심','저녁'],category:'중식',lightness:3,spicy:3,restaurants:[{name:'홍콩반점0410 강남점',rating:4.8,dist:'350m',reviews:1240},{name:'짬뽕지존 서초점',rating:4.6,dist:'580m',reviews:960},{name:'중화요리 향미 강남',rating:4.5,dist:'820m',reviews:720}]},
+  {name:'해물찜',emoji:'🦞',tags:['#중식','#해산물','#얼큰'],reason:'새우, 조개, 낙지가 가득한 얼큰한 해물찜. 각종 해산물의 진한 맛이 소스에 녹아들어요.',suitableFor:['저녁'],category:'중식',lightness:3,spicy:4,restaurants:[{name:'홍대 해물찜 강남점',rating:4.8,dist:'460m',reviews:1700},{name:'강남 해물 포차',rating:4.7,dist:'690m',reviews:1400},{name:'바다 해물찜 서초',rating:4.6,dist:'930m',reviews:1100}]},
+  {name:'양꼬치',emoji:'🍢',tags:['#중식','#양고기','#술안주'],reason:'쯔란과 고추가루가 뿌려진 양꼬치. 불 향 가득한 고기 한 점에 맥주 한 잔이면 더 이상 뭐가 필요해요.',suitableFor:['저녁','야식'],category:'중식',lightness:3,spicy:3,restaurants:[{name:'양꼬치앤칭따오 강남',rating:4.8,dist:'320m',reviews:2400},{name:'강남 양꼬치 본점',rating:4.7,dist:'550m',reviews:1900},{name:'신장 양꼬치 서초',rating:4.6,dist:'790m',reviews:1500}]},
+  {name:'딤섬',emoji:'🥟',tags:['#중식','#홍콩','#간식'],reason:'얇은 피 안에 꽉 찬 속재료. 쪄낸 딤섬 한 입에 육즙이 터지는 그 순간이 진짜예요.',suitableFor:['점심','간식'],category:'중식',lightness:2,spicy:1,restaurants:[{name:'딤섬 하우스 강남',rating:4.8,dist:'390m',reviews:1600},{name:'홍콩 딤섬 서초점',rating:4.7,dist:'620m',reviews:1300},{name:'차이나타운 딤섬 강남',rating:4.6,dist:'860m',reviews:1000}]},
+  {name:'마라샹궈',emoji:'🫕',tags:['#중식','#마라','#볶음'],reason:'원하는 재료를 골라 마라 소스에 볶아낸 마라샹궈. 얼얼하고 향긋한 마라 향이 중독적이에요.',suitableFor:['점심','저녁'],category:'중식',lightness:3,spicy:5,restaurants:[{name:'마라하오 강남점',rating:4.8,dist:'260m',reviews:2200},{name:'샹궈 강남점',rating:4.7,dist:'490m',reviews:1800},{name:'마라 천국 서초',rating:4.6,dist:'740m',reviews:1400}]},
+  {name:'탕후루',emoji:'🍡',tags:['#중식','#달콤','#간식'],reason:'과일을 설탕에 입혀 바삭하게 굳힌 탕후루. 아삭한 식감과 달콤함이 기분 전환에 딱이에요.',suitableFor:['간식'],category:'중식',lightness:1,spicy:1,restaurants:[{name:'탕후루 강남역점',rating:4.6,dist:'160m',reviews:3200},{name:'달콤 탕후루 서초',rating:4.5,dist:'390m',reviews:2500},{name:'정통 탕후루 강남',rating:4.7,dist:'630m',reviews:1900}]},
+
+  // ── 일식 추가 ──
+  {name:'덴푸라',emoji:'🍤',tags:['#일식','#바삭','#담백'],reason:'얇은 튀김옷이 바삭하게 씌워진 덴푸라. 새우와 채소의 담백한 맛을 살려낸 일본 요리의 정수예요.',suitableFor:['점심','저녁'],category:'일식',lightness:2,spicy:1,restaurants:[{name:'텐동 강남점',rating:4.8,dist:'410m',reviews:1400},{name:'덴카쓰야 서초점',rating:4.7,dist:'640m',reviews:1100},{name:'일본 튀김 강남',rating:4.6,dist:'880m',reviews:850}]},
+  {name:'야키토리',emoji:'🍢',tags:['#일식','#꼬치','#술안주'],reason:'숯불에 구워진 닭꼬치 한 점. 타레 소스든 소금이든, 맥주와 함께라면 퇴근 후 최고의 선택이에요.',suitableFor:['저녁','야식'],category:'일식',lightness:2,spicy:1,restaurants:[{name:'야키토리 강남점',rating:4.8,dist:'360m',reviews:1600},{name:'도리야 서초점',rating:4.7,dist:'590m',reviews:1300},{name:'닭꼬치 전문 강남',rating:4.6,dist:'830m',reviews:1000}]},
+  {name:'소바',emoji:'🍜',tags:['#일식','#담백','#여름'],reason:'차갑게 먹는 모리소바, 따뜻하게 먹는 카케소바. 메밀 향이 은은하게 나는 게 진짜 매력이에요.',suitableFor:['점심','저녁'],category:'일식',lightness:1,spicy:1,restaurants:[{name:'소바야 강남점',rating:4.8,dist:'370m',reviews:1200},{name:'메밀 소바 서초',rating:4.7,dist:'600m',reviews:950},{name:'모리소바 강남본점',rating:4.6,dist:'840m',reviews:750}]},
+  {name:'나베',emoji:'🍲',tags:['#일식','#겨울','#모둠'],reason:'각종 채소와 두부, 고기가 함께 끓여지는 나베. 추운 겨울 모여앉아 먹으면 몸이 녹아요.',suitableFor:['저녁'],category:'일식',lightness:2,spicy:1,restaurants:[{name:'나베 전문 강남',rating:4.7,dist:'450m',reviews:1300},{name:'일본 전골 서초점',rating:4.6,dist:'680m',reviews:1050},{name:'샤부샤부 강남본점',rating:4.8,dist:'920m',reviews:800}]},
+  {name:'오야코동',emoji:'🍱',tags:['#일식','#계란','#닭고기'],reason:'닭고기와 계란이 달콤짭짤한 소스에 익어 밥 위에 얹혀있는 오야코동. 완성도 높은 한 그릇이에요.',suitableFor:['점심','저녁'],category:'일식',lightness:2,spicy:1,restaurants:[{name:'요시노야 강남점',rating:4.5,dist:'160m',reviews:3400},{name:'오니기리와이규동',rating:4.6,dist:'380m',reviews:1800},{name:'돈부리 전문 서초',rating:4.7,dist:'620m',reviews:1300}]},
+  {name:'참치마요동',emoji:'🐟',tags:['#일식','#간편','#고소함'],reason:'참치와 마요네즈의 조합은 언제 먹어도 옳아요. 밥 위에 얹어 쓱쓱 비벼 먹으면 순삭이에요.',suitableFor:['아침','점심','간식'],category:'일식',lightness:1,spicy:1,restaurants:[{name:'오니기리와이규동 강남',rating:4.6,dist:'200m',reviews:1800},{name:'일식 덮밥 서초점',rating:4.5,dist:'430m',reviews:1400},{name:'참치마요 강남역점',rating:4.7,dist:'670m',reviews:1100}]},
+  {name:'스키야키',emoji:'🍲',tags:['#일식','#소고기','#달콤'],reason:'달콤한 간장 국물에 소고기가 익어가는 스키야키. 날계란에 찍어 먹으면 럭셔리한 맛이 나요.',suitableFor:['저녁'],category:'일식',lightness:3,spicy:1,restaurants:[{name:'스키야키 강남점',rating:4.8,dist:'520m',reviews:1100},{name:'일본 소고기 서초',rating:4.7,dist:'750m',reviews:870},{name:'와규 스키야키 강남',rating:4.9,dist:'980m',reviews:650}]},
+
+  // ── 양식 추가 ──
+  {name:'뇨키',emoji:'🥔',tags:['#양식','#이탈리안','#쫄깃'],reason:'감자로 만든 쫄깃한 뇨키에 크리미한 소스. 파스타와는 또 다른 식감이 새로워요.',suitableFor:['점심','저녁'],category:'양식',lightness:3,spicy:1,restaurants:[{name:'아르떼 파스타 청담',rating:4.8,dist:'390m',reviews:1560},{name:'이탈리안 키친 강남',rating:4.6,dist:'630m',reviews:980},{name:'카페 봉주르 서초',rating:4.5,dist:'870m',reviews:720}]},
+  {name:'그라탕',emoji:'🧀',tags:['#양식','#치즈','#겨울'],reason:'치즈가 폭 잠긴 그라탕. 오븐에서 갓 나온 뜨거운 치즈가 늘어지는 그 모습에 이미 행복해져요.',suitableFor:['점심','저녁'],category:'양식',lightness:3,spicy:1,restaurants:[{name:'치즈 스튜 강남점',rating:4.7,dist:'410m',reviews:1300},{name:'프렌치 그라탕 서초',rating:4.8,dist:'640m',reviews:1000},{name:'오븐 요리 강남',rating:4.6,dist:'880m',reviews:800}]},
+  {name:'클램차우더',emoji:'🥣',tags:['#양식','#수프','#따뜻함'],reason:'조개 국물과 감자, 베이컨이 어우러진 진한 클램차우더. 빵과 함께 먹으면 포만감이 남달라요.',suitableFor:['아침','점심'],category:'양식',lightness:2,spicy:1,restaurants:[{name:'수프앤빵 강남',rating:4.7,dist:'350m',reviews:1200},{name:'뉴잉글랜드 클램차우더 강남',rating:4.6,dist:'590m',reviews:950},{name:'브레드앤버터 서초',rating:4.5,dist:'830m',reviews:730}]},
+  {name:'에그베네딕트',emoji:'🍳',tags:['#양식','#브런치','#주말'],reason:'수란과 홀랜다이즈 소스의 황금 조합. 주말 아침을 특별하게 만들어줄 최고의 브런치예요.',suitableFor:['아침','간식'],category:'양식',lightness:2,spicy:1,restaurants:[{name:'더브런치 강남점',rating:4.8,dist:'590m',reviews:1100},{name:'에그앤브런치 강남',rating:4.7,dist:'330m',reviews:1400},{name:'브런치 하우스 서초',rating:4.6,dist:'800m',reviews:870}]},
+  {name:'케밥',emoji:'🌯',tags:['#양식','#터키','#든든'],reason:'육즙 가득한 고기와 신선한 채소, 요거트 소스가 또르띠야에 가득. 이국적이고 든든해요.',suitableFor:['점심','저녁','간식'],category:'양식',lightness:2,spicy:2,restaurants:[{name:'이스탄불 케밥 강남',rating:4.7,dist:'320m',reviews:1800},{name:'터키 케밥 서초점',rating:4.6,dist:'550m',reviews:1400},{name:'케밥 하우스 강남',rating:4.5,dist:'790m',reviews:1100}]},
+  {name:'아보카도토스트',emoji:'🥑',tags:['#양식','#건강','#브런치'],reason:'으깬 아보카도에 레몬즙, 소금 한 꼬집. 바삭한 빵 위에 얹어 먹으면 건강하고 맛있어요.',suitableFor:['아침','간식'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'카페 봉주르 서초',rating:4.7,dist:'360m',reviews:1400},{name:'에그앤브런치 강남',rating:4.8,dist:'590m',reviews:1100},{name:'그린 브런치 강남',rating:4.6,dist:'820m',reviews:870}]},
+  {name:'포케볼',emoji:'🥗',tags:['#양식','#건강','#하와이'],reason:'신선한 참치나 연어에 다양한 채소, 아보카도까지. 색깔만 봐도 기분이 좋아지는 건강 한 끼예요.',suitableFor:['점심','저녁'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'포케 강남점',rating:4.7,dist:'340m',reviews:1600},{name:'알로하 포케 서초',rating:4.8,dist:'570m',reviews:1300},{name:'하와이안 포케 강남',rating:4.6,dist:'810m',reviews:1000}]},
+  {name:'치킨윙',emoji:'🍗',tags:['#양식','#미국식','#술안주'],reason:'달콤하거나 매콤하거나, 소스만 잘 고르면 치킨윙은 언제나 옳아요. 맥주와 함께라면 완벽해요.',suitableFor:['저녁','야식'],category:'양식',lightness:3,spicy:2,restaurants:[{name:'버팔로윙 강남점',rating:4.7,dist:'300m',reviews:2000},{name:'윙잇 서초점',rating:4.6,dist:'530m',reviews:1600},{name:'치킨윙 전문 강남',rating:4.5,dist:'770m',reviews:1300}]},
+  {name:'나초',emoji:'🌽',tags:['#양식','#멕시칸','#간식'],reason:'바삭한 나초 칩에 살사, 과카몰리, 치즈 소스. 혼자 먹어도, 나눠 먹어도 멈출 수가 없어요.',suitableFor:['간식','야식'],category:'양식',lightness:2,spicy:2,restaurants:[{name:'타코벨 강남점',rating:4.4,dist:'310m',reviews:2800},{name:'멕시칸 그릴 강남',rating:4.6,dist:'540m',reviews:1300},{name:'칠리스 강남점',rating:4.5,dist:'790m',reviews:1000}]},
+  {name:'와플',emoji:'🧇',tags:['#양식','#달콤','#브런치'],reason:'바삭한 겉면과 폭신한 속. 메이플 시럽과 버터를 올리면 카페 부럽지 않은 한 접시가 완성돼요.',suitableFor:['아침','간식'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'와플카 강남점',rating:4.7,dist:'250m',reviews:1700},{name:'브런치웍스 강남',rating:4.8,dist:'480m',reviews:1400},{name:'와플 하우스 서초',rating:4.6,dist:'720m',reviews:1100}]},
+  {name:'팬케이크',emoji:'🥞',tags:['#양식','#아침','#달콤'],reason:'폭신하게 구워진 팬케이크에 메이플 시럽 한 바퀴. 어른도 아이도 행복해지는 아침이에요.',suitableFor:['아침','간식'],category:'양식',lightness:2,spicy:1,restaurants:[{name:'더브런치 강남점',rating:4.8,dist:'590m',reviews:1100},{name:'팬케이크 전문 강남',rating:4.7,dist:'380m',reviews:1400},{name:'모닝 플레이트 서초',rating:4.6,dist:'820m',reviews:870}]},
+
+  // ── 치킨 추가 ──
+  {name:'로스트치킨',emoji:'🍗',tags:['#치킨','#고급','#오븐'],reason:'오븐에서 천천히 구워진 로스트 치킨. 육즙이 풍부하고 껍질이 바삭바삭해서 특별한 날 제격이에요.',suitableFor:['저녁'],category:'치킨',lightness:3,spicy:1,restaurants:[{name:'로스트 치킨 강남',rating:4.8,dist:'410m',reviews:1400},{name:'오븐 치킨 서초점',rating:4.7,dist:'640m',reviews:1100},{name:'통닭 전문 강남본점',rating:4.6,dist:'880m',reviews:850}]},
+  {name:'닭강정',emoji:'🍗',tags:['#치킨','#달콤','#간식'],reason:'바삭하게 튀긴 닭에 달콤한 강정 소스가 코팅되면 한 개만 먹을 수가 없어요.',suitableFor:['간식','야식','저녁'],category:'치킨',lightness:3,spicy:2,restaurants:[{name:'닭강정 전문 강남',rating:4.7,dist:'280m',reviews:1900},{name:'속초 닭강정 강남점',rating:4.8,dist:'510m',reviews:1600},{name:'달콤 닭강정 서초',rating:4.6,dist:'750m',reviews:1300}]},
+  {name:'반반치킨',emoji:'🍗',tags:['#치킨','#모둠','#야식'],reason:'후라이드 반, 양념 반. 두 가지 맛을 동시에 즐기는 가장 현명한 선택이에요.',suitableFor:['야식','저녁'],category:'치킨',lightness:3,spicy:2,restaurants:[{name:'교촌치킨 역삼점',rating:4.8,dist:'320m',reviews:2410},{name:'BBQ치킨 강남직영점',rating:4.7,dist:'580m',reviews:1870},{name:'bhc치킨 강남점',rating:4.6,dist:'820m',reviews:2100}]},
+
+  // ── 디저트/음료 추가 ──
+  {name:'빙수',emoji:'🍧',tags:['#디저트','#여름','#달콤'],reason:'더운 여름 팥빙수 한 그릇이면 더위가 싹 날아가요. 쫄깃한 떡과 달콤한 팥이 최고의 조합이에요.',suitableFor:['간식'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'설빙 강남역점',rating:4.6,dist:'130m',reviews:4100},{name:'빙수 달인 서초점',rating:4.7,dist:'360m',reviews:1800},{name:'팥빙수 전문 강남',rating:4.8,dist:'590m',reviews:1200}]},
+  {name:'마카롱',emoji:'🍬',tags:['#디저트','#달콤','#선물'],reason:'컬러풀한 마카롱 한 입. 바삭한 코크 안에 진한 크림이 숨어있어요. 기분 전환에 딱이에요.',suitableFor:['간식'],category:'양식',lightness:1,spicy:1,restaurants:[{name:'라뒤레 강남점',rating:4.8,dist:'280m',reviews:2100},{name:'마카롱 공방 서초',rating:4.7,dist:'510m',reviews:1600},{name:'달콤한 마카롱 강남',rating:4.6,dist:'750m',reviews:1200}]},
+
+  // ── 해산물/기타 추가 ──
+  {name:'랍스터',emoji:'🦞',tags:['#해산물','#특별한날','#럭셔리'],reason:'오늘은 나한테 좀 투자해도 돼요. 버터 향 가득한 랍스터 한 마리면 오늘 하루가 완전히 달라져요.',suitableFor:['저녁'],category:'양식',lightness:3,spicy:1,restaurants:[{name:'랍스터 강남점',rating:4.9,dist:'580m',reviews:1400},{name:'씨푸드 레스토랑 강남',rating:4.8,dist:'810m',reviews:1100},{name:'오마카세 서초점',rating:4.7,dist:'1.0km',reviews:870}]},
+  {name:'새우볶음밥',emoji:'🍤',tags:['#중식','#새우','#든든'],reason:'탱글탱글한 새우와 고슬고슬한 볶음밥. 굴소스 향이 더해져 입맛을 자극하는 한 그릇이에요.',suitableFor:['점심','저녁'],category:'중식',lightness:2,spicy:1,restaurants:[{name:'차이나팩토리 강남점',rating:4.7,dist:'420m',reviews:1100},{name:'새우 전문 중화요리 강남',rating:4.6,dist:'650m',reviews:890},{name:'홍콩식당 서초점',rating:4.5,dist:'890m',reviews:680}]},
+  {name:'훠궈',emoji:'🫕',tags:['#중식','#마라','#모둠'],reason:'맑은 탕과 마라 탕이 함께 나오는 훠궈. 원하는 재료를 골라 직접 익혀 먹는 재미가 있어요.',suitableFor:['저녁'],category:'중식',lightness:3,spicy:3,restaurants:[{name:'하이디라오 강남점',rating:4.9,dist:'350m',reviews:5400},{name:'마라훠궈 강남점',rating:4.7,dist:'580m',reviews:2800},{name:'훠궈 천국 서초',rating:4.6,dist:'820m',reviews:2000}]},
+  {name:'돼지고기 샤브샤브',emoji:'🍲',tags:['#일식','#담백','#건강'],reason:'얇게 썬 돼지고기를 뜨거운 육수에 살짝 담궜다가 폰즈 소스에 찍어 먹으면 담백하고 건강해요.',suitableFor:['점심','저녁'],category:'일식',lightness:2,spicy:1,restaurants:[{name:'샤브샤브 강남본점',rating:4.7,dist:'470m',reviews:1500},{name:'일식 샤브 서초점',rating:4.6,dist:'700m',reviews:1200},{name:'담백 샤브샤브 강남',rating:4.8,dist:'940m',reviews:950}]},
+  {name:'닭발',emoji:'🍗',tags:['#한식','#야식','#매콤'],reason:'매콤달콤한 양념에 졸여진 닭발. 뼈 발라먹는 수고로움도 즐거움이 되는 야식이에요.',suitableFor:['야식','저녁'],category:'한식',lightness:3,spicy:4,restaurants:[{name:'닭발 전문 강남점',rating:4.7,dist:'340m',reviews:1600},{name:'매운 닭발 서초',rating:4.6,dist:'570m',reviews:1300},{name:'불닭발 강남본점',rating:4.8,dist:'810m',reviews:1000}]},
+  {name:'오삼불고기',emoji:'🦑',tags:['#한식','#오징어','#삼겹살'],reason:'오징어와 삼겹살을 함께 볶은 오삼불고기. 두 재료의 시너지가 기대 이상이에요.',suitableFor:['점심','저녁'],category:'한식',lightness:3,spicy:3,restaurants:[{name:'오삼 전문 강남점',rating:4.8,dist:'310m',reviews:1700},{name:'불판 위의 오삼 서초',rating:4.7,dist:'540m',reviews:1400},{name:'오삼불고기 강남역',rating:4.5,dist:'780m',reviews:1100}]},
 ];
 
 const steps = [
   {q:'지금은 언제인가요?',hint:'식사 시간대를 선택해주세요',key:'time',
    options:[{label:'아침',icon:'🌅'},{label:'점심',icon:'☀️'},{label:'저녁',icon:'🌆'},{label:'간식',icon:'🧁'},{label:'야식',icon:'🌙'}]},
   {q:'무엇을 드시고 싶나요?',hint:'오늘 끌리는 음식 종류를 선택해주세요',key:'category',
-   options:[{label:'한식',icon:'🍚'},{label:'중식',icon:'🥟'},{label:'일식',icon:'🍣'},{label:'분식',icon:'🌶️'},{label:'양식',icon:'🍝'},{label:'아무거나',icon:'🎲'}]},
+   options:[{label:'한식',icon:'🍚'},{label:'중식',icon:'🥟'},{label:'일식',icon:'🍣'},{label:'분식',icon:'🌶️'},{label:'양식',icon:'🍝'},{label:'치킨',icon:'🍗'},{label:'아무거나',icon:'🎲'}]},
   {q:'식사 파트너는 누구인가요?',hint:'함께 먹는 사람에 따라 추천이 달라져요',key:'partner',
    options:[{label:'혼자',icon:'🙋'},{label:'친구',icon:'👫'},{label:'연인',icon:'💑'},{label:'가족',icon:'👨‍👩‍👧'},{label:'회식',icon:'🍻'},{label:'모임',icon:'👥'}]},
   {q:'지금 계절은 어떤가요?',hint:'계절에 맞는 메뉴를 추천해드려요',key:'season',
@@ -716,7 +881,7 @@ function copyRestaurant(){
 }
 function openDelivery(p){
   const q=currentMenu?currentMenu.name:'';
-  const urls={baemin:`https://www.baemin.com/`,coupang:`https://www.coupangeats.com/`,yogiyo:`https://www.yogiyo.co.kr/mobile/#/`};
+  const urls={baemin:`https://baemin.me/`,coupang:`https://m.coupangeats.com/`,yogiyo:`https://m.yogiyo.co.kr/`};
   showToast('주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
   likedDone=true;
   window.open(urls[p],'_blank');
@@ -849,9 +1014,9 @@ function openDelivery(platform){
   }
   const q = currentMenu ? currentMenu.name : '';
   const urls = {
-    baemin:  'https://www.baemin.com/',
-    coupang: 'https://www.coupangeats.com/',
-    yogiyo:  'https://www.yogiyo.co.kr/mobile/#/',
+    baemin:  'https://baemin.me/',
+    coupang: 'https://m.coupangeats.com/',
+    yogiyo:  'https://m.yogiyo.co.kr/',
   };
   showToast('주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
   likedDone = true;

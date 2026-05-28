@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -command \"\\(Select-String -Path 'c:\\\\dpqpqp\\\\바탕 화면\\\\oneul-igeo\\\\index.html' -Pattern \\\\\"name:'\\\\\"\\).Count\")",
+      "Bash(powershell -command \"Select-String -Path 'c:\\\\dpqpqp\\\\바탕 화면\\\\oneul-igeo\\\\index.html' -Pattern 'baemin.me|m\\\\.coupangeats|m\\\\.yogiyo' | Select-Object LineNumber,Line\")",
+      "Bash(powershell -command \"Get-ChildItem 'c:\\\\dpqpqp\\\\바탕 화면\\\\oneul-igeo\\\\' | Select-Object Name,Length,LastWriteTime\")"
+    ]
+  }
+}
