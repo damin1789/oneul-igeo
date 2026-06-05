@@ -1291,12 +1291,12 @@ function showLoginRequiredModal(){
 // 공유 함수
 function getShareText(){
   const menu = currentMenu ? currentMenu.name : '오늘의 메뉴';
-  return `오늘 뭐 먹을지 고민했는데 "${menu}" 추천받았어요 🍽️\n나도 해봐! → https://todaypick.vercel.app`;
+  return `오늘 뭐 먹을지 고민했는데 "${menu}" 추천받았어요 🍽️\n나도 해봐! → https://today-pick.vercel.app`;
 }
 function shareKakao(){
   const text = getShareText();
   if(navigator.share){
-    navigator.share({title:'오늘 이거 어때요?', text, url:'https://todaypick.vercel.app'});
+    navigator.share({title:'오늘 이거 어때요?', text, url:'https://today-pick.vercel.app'});
   } else {
     navigator.clipboard.writeText(text).then(()=>showToast('카카오톡에 붙여넣기 해보세요! 📋'));
   }
@@ -1308,7 +1308,7 @@ function shareTwitter(){
   window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');
 }
 function shareLink(){
-  navigator.clipboard.writeText('https://todaypick.vercel.app').then(()=>showToast('링크 복사됐어요! 🔗'));
+  navigator.clipboard.writeText('https://today-pick.vercel.app').then(()=>showToast('링크 복사됐어요! 🔗'));
 }
 
 // 생일 체크
