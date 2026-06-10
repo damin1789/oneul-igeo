@@ -206,9 +206,9 @@ input,select,textarea{font-size:16px!important;} /* iOS zoom 방지 */
 .find-hint{font-size:0.8rem;color:var(--text-muted);text-align:center;line-height:1.5;}
 .find-hint strong{color:var(--accent);}
 .share-section{margin-top:16px;text-align:center;padding:16px 0;}
-.share-label{font-size:0.73rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;}
+.share-label{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:14px;}
 .share-btns{display:flex;justify-content:center;gap:14px;}
-.share-btn{width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.2s,box-shadow 0.2s;}
+.share-btn{width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.2s,box-shadow 0.2s;}
 .share-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.15);}
 .share-kakao{background:#FEE500;}
 .share-insta{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);}
@@ -281,6 +281,24 @@ input,select,textarea{font-size:16px!important;} /* iOS zoom 방지 */
 .name-edit-inline{display:none;align-items:center;gap:6px;margin-bottom:1px;}
 .name-edit-inline.show{display:flex;}
 .name-edit-input{background:var(--surface2);border:1.5px solid var(--accent);border-radius:8px;padding:4px 10px;font-size:0.95rem;font-family:inherit;font-weight:700;color:var(--text);outline:none;width:120px;}
+.share-card{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.share-btn-labels{display:flex;justify-content:center;gap:8px;margin-top:6px;}
+.btn-history-share{background:var(--surface2);border:1.5px solid var(--border);cursor:pointer;font-size:0.72rem;font-weight:600;color:var(--text-muted);padding:5px 10px;border-radius:8px;transition:all 0.2s;}
+.btn-history-share:hover{border-color:var(--accent);color:var(--accent);}
+.share-result-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.share-result-overlay.show{opacity:1;pointer-events:all;}
+.share-result-box{width:100%;max-width:340px;background:var(--surface);border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.2);transform:scale(0.9);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);}
+.share-result-overlay.show .share-result-box{transform:scale(1);}
+.share-result-card{background:#FFFFFF;padding:28px 24px;}
+.share-result-btns{padding:16px 20px;display:flex;flex-direction:column;gap:8px;}
+.btn-share-action{width:100%;padding:10px 12px;border-radius:10px;border:none;font-size:0.82rem;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;opacity:0.88;}
+.btn-share-kakao-full{background:#FEE500;color:#3A1D1D;}
+.btn-share-insta-full{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;}
+.btn-share-x-full{background:#000;color:white;}
+.btn-share-copy-full{background:var(--surface2);color:var(--text);border:1.5px solid var(--border);}
+.btn-share-card-full{background:var(--accent);color:white;}
+.btn-share-close{background:none;border:none;color:var(--text-dim);font-size:0.82rem;cursor:pointer;text-decoration:underline;text-align:center;padding:4px;font-family:inherit;}
+.share-btn-labels span{font-size:0.65rem;color:var(--text-muted);width:62px;text-align:center;font-weight:500;}
 .avatar-picker-tabs{display:flex;gap:6px;margin-bottom:12px;}
 .avatar-tab{flex:1;padding:7px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-muted);font-size:0.82rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.2s;}
 .avatar-tab.active{background:var(--accent);color:white;border-color:var(--accent);}
@@ -400,6 +418,15 @@ input,select,textarea{font-size:16px!important;}
   .btn-delivery-mini{font-size:0.74rem;padding:11px 4px;}
 }
 </style>
+<!-- Google Analytics -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-12RH5EZQW6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-12RH5EZQW6');
+</script>
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
@@ -460,20 +487,44 @@ input,select,textarea{font-size:16px!important;}
 
     <!-- 공유 버튼 — 항상 표시 -->
     <div class="share-section">
-      <div class="share-label">이 추천 공유하기</div>
+      <div class="share-label">친구도 메뉴 추천받기</div>
       <div class="share-btns">
         <button class="share-btn share-kakao" onclick="shareKakao()" title="카카오톡">
-          <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#3A1D1D" d="M12 3C6.477 3 2 6.477 2 11c0 2.89 1.636 5.434 4.125 6.982L5.25 21l4.027-2.148C9.74 18.95 10.858 19 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg>
+          <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#3A1D1D" d="M12 3C6.477 3 2 6.477 2 11c0 2.89 1.636 5.434 4.125 6.982L5.25 21l4.027-2.148C9.74 18.95 10.858 19 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg>
         </button>
         <button class="share-btn share-insta" onclick="shareInsta()" title="인스타그램">
-          <svg width="22" height="22" viewBox="0 0 24 24"><path fill="white" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24"><path fill="white" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         </button>
-        <button class="share-btn share-twitter" onclick="shareTwitter()" title="트위터">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="white" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.732-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+        <button class="share-btn share-twitter" onclick="shareTwitter()" title="X">
+          <svg width="22" height="22" viewBox="0 0 24 24"><path fill="white" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.732-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
         </button>
         <button class="share-btn share-copy" onclick="shareLink()" title="링크 복사">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
         </button>
+      </div>
+      <div class="share-btn-labels">
+        <span>카카오톡</span>
+        <span>인스타그램</span>
+        <span>X</span>
+        <span>링크 복사</span>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-top:10px;">링크를 공유하고 친구의 메뉴도 확인해보세요 🍽️</p>
+    </div>
+
+    <!-- 공유 카드 (숨김 - 캔버스용) -->
+    <div id="shareCardWrap" style="position:fixed;left:-9999px;top:-9999px;z-index:-1;">
+      <div id="shareCard" style="width:360px;background:#FAF6EF;border-radius:24px;padding:28px 24px;font-family:'Noto Sans KR',sans-serif;box-shadow:0 8px 32px rgba(0,0,0,0.08);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+          <span id="shareCardBadge" style="background:#ff6b35;color:white;font-size:10px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:0.1em;">🍽️ 오늘 이거 어때요?</span>
+        </div>
+        <div id="shareCardImgBox" style="background:#FFFFFF;border-radius:18px;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
+          <div id="shareCardEmoji" style="font-size:9rem;">🍜</div>
+        </div>
+        <div id="shareCardTimeLabel" style="margin-bottom:6px;font-size:0.8rem;color:#8a6a52;">오늘 저녁은</div>
+        <div id="shareCardName" style="font-size:1.7rem;font-weight:700;color:#2d1a0a;margin-bottom:10px;">삼겹살 어때요?</div>
+        <div style="font-size:0.78rem;color:#8a6a52;margin-bottom:6px;">🤔 메뉴 고르기 귀찮아서 3초 만에 추천받음</div>
+        <div id="shareCardTags" style="font-size:0.75rem;font-weight:600;margin-bottom:12px;color:#FF7A2F;">#저메추 #오늘이거어때요</div>
+        <div id="shareCardLink" style="font-size:0.88rem;font-weight:700;color:#FF7A2F;">🔗 today-pick.vercel.app</div>
       </div>
     </div>
 
@@ -675,6 +726,41 @@ input,select,textarea{font-size:16px!important;}
       </div>
     </div>
     <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+  </div>
+</div>
+
+<!-- 공유 결과 모달 -->
+<div class="share-result-overlay" id="shareResultOverlay" onclick="if(event.target===this)closeShareResult()">
+  <div class="share-result-box">
+    <div class="share-result-card" id="shareResultCard">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        <span style="background:#ff6b35;color:white;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;">🍽️ 오늘 이거 어때요?</span>
+      </div>
+      <div style="background:#EDE8E0;border-radius:16px;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+        <div id="shareResultEmoji" style="font-size:8.5rem;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.1))">🍜</div>
+      </div>
+      <div id="shareResultTimeLabel" style="font-size:0.72rem;color:#8a6a52;margin-bottom:2px;">오늘 저녁은</div>
+      <div id="shareResultName" style="font-size:1.3rem;font-weight:700;color:#2d1a0a;margin-bottom:8px;">삼겹살 어때요?</div>
+      <div id="shareResultTags" style="font-size:0.68rem;color:#ff6b35;font-weight:600;margin-bottom:6px;">#저메추 #오늘이거어때요</div>
+      <a href="https://today-pick.vercel.app" target="_blank" style="font-size:0.75rem;font-weight:700;color:#ff6b35;text-decoration:none;display:block;">🔗 today-pick.vercel.app</a>
+    </div>
+    <div class="share-result-btns">
+      <button class="btn-share-action btn-share-kakao-full" onclick="shareResultKakao()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#3A1D1D" d="M12 3C6.477 3 2 6.477 2 11c0 2.89 1.636 5.434 4.125 6.982L5.25 21l4.027-2.148C9.74 18.95 10.858 19 12 19c5.523 0 10-3.477 10-8S17.523 3 12 3z"/></svg>
+        카카오톡 공유
+      </button>
+      <button class="btn-share-action btn-share-insta-full" onclick="shareResultInsta()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="white" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        인스타그램 공유
+      </button>
+      <button class="btn-share-action btn-share-x-full" onclick="shareResultTwitter()">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="white" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.732-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+        X(트위터) 공유
+      </button>
+      <button class="btn-share-action btn-share-copy-full" onclick="shareResultCopy()">🔗 링크 복사</button>
+      <button class="btn-share-action btn-share-card-full" onclick="saveShareCard()">📸 카드 이미지 저장</button>
+      <button class="btn-share-close" onclick="closeShareResult()">닫기</button>
+    </div>
   </div>
 </div>
 
@@ -1022,6 +1108,18 @@ let currentStep=0, stepSelections={}, currentMenu=null, retryCount=0, likedDone=
 
 document.addEventListener('DOMContentLoaded',()=>{
   initFloatingEmojis(); initProgressBar(); renderStep(0); initMypage(); updateMypageName();
+
+  // URL 파라미터로 메뉴 바로 표시
+  const params = new URLSearchParams(window.location.search);
+  const menuParam = params.get('menu');
+  if(menuParam){
+    const found = menus.find(m=>m.name===decodeURIComponent(menuParam));
+    if(found){
+      currentMenu = found;
+      showResult();
+      return;
+    }
+  }
   // 복귀 감지
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible'&&likedDone&&currentScreen==='result')
@@ -1164,9 +1262,17 @@ function submitFeedback(val){
 function submitReturnFeedback(t){
   document.getElementById('returnModal').classList.remove('show');
   likedDone=false;
+  const menuName = currentMenu ? currentMenu.name : '';
+  const menuEmoji = currentMenu ? currentMenu.emoji : '🍽️';
   if (currentMenu) saveHistory(currentMenu, t === 'good' ? '맛있었어요' : '별로였어요');
   showToast(t==='good'?'맛있게 드셨군요! 취향 지도 +1 🎯':'아쉬웠군요. 다음엔 더 잘 찾아드릴게요 💪');
-  setTimeout(()=>{ navTo('mypage'); }, 1200);
+  setTimeout(()=>{
+    navTo('mypage');
+    // 맛있었으면 공유 유도
+    if(t==='good' && menuName){
+      setTimeout(()=>shareFromHistory(menuName, menuEmoji), 800);
+    }
+  }, 1200);
 }
 function closeReturnModal(){document.getElementById('returnModal').classList.remove('show');likedDone=false;}
 
@@ -1291,24 +1397,64 @@ function showLoginRequiredModal(){
 // 공유 함수
 function getShareText(){
   const menu = currentMenu ? currentMenu.name : '오늘의 메뉴';
-  return `오늘 뭐 먹을지 고민했는데 "${menu}" 추천받았어요 🍽️\n나도 해봐! → https://today-pick.vercel.app`;
+  return `오늘 "${menu}" 추천받았어요 🍽️\n메뉴 고르기 귀찮을 때 딱이에요!\n👇 당신의 메뉴도 확인해보세요\nhttps://today-pick.vercel.app`;
 }
 function shareKakao(){
   const text = getShareText();
   if(navigator.share){
-    navigator.share({title:'오늘 이거 어때요?', text, url:'https://today-pick.vercel.app'});
+    navigator.share({title:'오늘 이거 어때요?', text, url:'https://today-pick.vercel.app'})
+      .catch(()=>navigator.clipboard.writeText(text).then(()=>showToast('📋 복사됐어요! 카카오톡에 붙여넣기 해보세요')));
   } else {
-    navigator.clipboard.writeText(text).then(()=>showToast('카카오톡에 붙여넣기 해보세요! 📋'));
+    navigator.clipboard.writeText(text).then(()=>showToast('📋 복사됐어요! 카카오톡에 붙여넣기 해보세요'));
   }
 }
 function shareInsta(){
-  navigator.clipboard.writeText(getShareText()).then(()=>showToast('복사됐어요! 인스타에 붙여넣기 해보세요 📸'));
+  const text = getShareText();
+  const copy = ()=>{ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('📸 복사됐어요! 인스타에 붙여넣기 해보세요'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(()=>showToast('📸 복사됐어요! 인스타에 붙여넣기 해보세요')).catch(copy); } else { copy(); }
 }
 function shareTwitter(){
   window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');
 }
 function shareLink(){
-  navigator.clipboard.writeText('https://today-pick.vercel.app').then(()=>showToast('링크 복사됐어요! 🔗'));
+  const menu = currentMenu ? encodeURIComponent(currentMenu.name) : '';
+  const url = 'https://today-pick.vercel.app'+(menu?'?menu='+menu:'');
+  const copy = ()=>{ const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('🔗 링크 복사됐어요!'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(()=>showToast('🔗 링크 복사됐어요!')).catch(copy); } else { copy(); }
+}
+function saveShareCard(){
+  if(!currentMenu){ showToast('먼저 메뉴를 추천받아보세요!'); return; }
+  // 카드 내용 업데이트
+  document.getElementById('shareCardEmoji').textContent = currentMenu.emoji;
+  document.getElementById('shareCardName').textContent = currentMenu.name + ' 어때요?';
+  document.getElementById('shareCardTags').textContent = currentMenu.tags.join(' ');
+
+  // 카드 보이게 해서 캡처
+  const wrap = document.getElementById('shareCardWrap');
+  wrap.style.left = '0';
+  wrap.style.top = '0';
+  wrap.style.zIndex = '9999';
+  wrap.style.position = 'fixed';
+  wrap.style.background = 'transparent';
+
+  showToast('카드 생성 중... 🎨');
+
+  html2canvas(document.getElementById('shareCard'), {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: null,
+  }).then(canvas => {
+    wrap.style.left = '-9999px';
+    wrap.style.zIndex = '-1';
+    const link = document.createElement('a');
+    link.download = '오늘이거어때요_' + currentMenu.name + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('카드 저장됐어요! 📸 인스타에 올려보세요');
+  }).catch(()=>{
+    wrap.style.left = '-9999px';
+    showToast('저장 중 오류가 났어요. 다시 시도해주세요.');
+  });
 }
 
 // 생일 체크
@@ -1544,6 +1690,154 @@ function showLevelGuide(){
   document.getElementById('levelGuideOverlay').classList.add('show');
 }
 
+// 기록 공유 모달
+let shareResultMenu = {name:'', emoji:''};
+function closeShareResult(){ document.getElementById('shareResultOverlay').classList.remove('show'); }
+function shareFromHistory(name, emoji){
+  shareResultMenu = {name, emoji};
+  const menu = menus.find(m=>m.name===name);
+  // 시간대 라벨
+  const timeLabel = stepSelections.time || '오늘';
+  const timeLabelEl = document.getElementById('shareResultTimeLabel');
+  if(timeLabelEl) timeLabelEl.textContent = '오늘 '+timeLabel+'은';
+  document.getElementById('shareResultEmoji').textContent = emoji;
+  document.getElementById('shareResultName').textContent = name + ' 어때요?';
+  // 해시태그: 기본값 + 메뉴 태그
+  const baseTags = '#저메추 #오늘이거어때요';
+  const catTag = menu ? ' #'+menu.category : '';
+  const timeTag = stepSelections.time ? ' #'+(stepSelections.time) : '';
+  document.getElementById('shareResultTags').textContent = baseTags + catTag + timeTag;
+  document.getElementById('shareResultOverlay').classList.add('show');
+}
+function getShareResultText(){
+  return `"${shareResultMenu.name}" 먹었는데 진짜 맛있었어요 🍽️\n메뉴 고민될 때 써보세요!\n👇 today-pick.vercel.app`;
+}
+function shareResultKakao(){
+  const text = getShareResultText();
+  if(navigator.share){ navigator.share({title:'오늘 이거 어때요?', text, url:'https://today-pick.vercel.app'}).catch(()=>navigator.clipboard.writeText(text).then(()=>showToast('📋 복사됐어요! 카카오톡에 붙여넣기 해보세요'))); }
+  else { navigator.clipboard.writeText(text).then(()=>showToast('📋 복사됐어요! 카카오톡에 붙여넣기 해보세요')); }
+}
+function shareResultTwitter(){ window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareResultText()),'_blank'); }
+function shareResultInsta(){
+  const text = getShareResultText();
+  const copy = ()=>{ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('📸 복사됐어요! 인스타에 붙여넣기 해보세요'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(()=>showToast('📸 복사됐어요! 인스타에 붙여넣기 해보세요')).catch(copy); } else { copy(); }
+}
+function shareResultCopy(){
+  const url = 'https://today-pick.vercel.app?menu='+encodeURIComponent(shareResultMenu.name);
+  const copy = ()=>{ const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('🔗 링크 복사됐어요!'); };
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(()=>showToast('🔗 링크 복사됐어요!')).catch(copy); } else { copy(); }
+}
+function saveShareCard(){
+  const name = shareResultMenu.name || (currentMenu ? currentMenu.name : '');
+  const emoji = shareResultMenu.emoji || (currentMenu ? currentMenu.emoji : '🍽️');
+  const menu = menus.find(m=>m.name===name);
+  if(!name){ showToast('먼저 메뉴를 추천받아보세요!'); return; }
+
+  const timeLabel = stepSelections.time || '오늘';
+  const baseTags = '#저메추 #오늘이거어때요';
+  const catTag = menu ? ' #'+menu.category : '';
+  const timeTag = stepSelections.time ? ' #'+(stepSelections.time) : '';
+  const tags = baseTags + catTag + timeTag;
+
+  // 랜덤 테마 - 확실히 다른 배경색
+  const themes = [
+    {bg:'#FAF6EF', imgBg:'#F0E8DC', accent:'#FF7A2F', text:'#2d1a0a'},  // 따뜻한 베이지
+    {bg:'#E8F4FD', imgBg:'#D0E8F8', accent:'#2E86C1', text:'#0a1a2d'},  // 쿨 블루
+    {bg:'#EDFAF1', imgBg:'#D0F0DC', accent:'#27AE60', text:'#0a2d14'},  // 프레시 그린
+    {bg:'#F5EEF8', imgBg:'#E8D8F5', accent:'#8E44AD', text:'#1a0a2d'},  // 소프트 퍼플
+    {bg:'#FFFDE7', imgBg:'#FFF59D', accent:'#F39C12', text:'#2d200a'},  // 선샤인 옐로
+    {bg:'#FDEDEC', imgBg:'#FADBD8', accent:'#E74C3C', text:'#2d0a0a'},  // 로즈 레드
+  ];
+  const t = themes[Math.floor(Math.random()*themes.length)];
+
+  showToast('카드 생성 중... 🎨');
+
+  // Canvas 직접 그리기 (이모지 깨짐 방지)
+  const W = 720, H = 900;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // 배경
+  ctx.fillStyle = t.bg;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, W, H, 40);
+  ctx.fill();
+
+  // 뱃지
+  ctx.fillStyle = t.accent;
+  ctx.beginPath();
+  ctx.roundRect(40, 40, 220, 44, 22);
+  ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.fillText('🍽️ 오늘 이거 어때요?', 58, 69);
+
+  // 이모지 박스
+  ctx.fillStyle = t.imgBg;
+  ctx.beginPath();
+  ctx.roundRect(40, 108, W-80, 300, 28);
+  ctx.fill();
+
+  // 이모지
+  ctx.font = '160px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(emoji, W/2, 310);
+  ctx.textAlign = 'left';
+
+  // 시간대
+  ctx.fillStyle = t.text+'99';
+  ctx.font = '28px sans-serif';
+  ctx.fillText('오늘 '+timeLabel+'은', 40, 460);
+
+  // 메뉴명
+  ctx.fillStyle = t.text;
+  ctx.font = 'bold 58px sans-serif';
+  ctx.fillText(name+' 어때요?', 40, 530);
+
+  // 설명
+  ctx.fillStyle = t.text+'88';
+  ctx.font = '26px sans-serif';
+  ctx.fillText('🤔 메뉴 고르기 귀찮아서 3초 만에 추천받음', 40, 595);
+
+  // 태그
+  ctx.fillStyle = t.accent;
+  ctx.font = 'bold 26px sans-serif';
+  // 태그 줄바꿈 처리
+  const tagWords = tags.split(' ');
+  let tagLine = '', tagY = 648;
+  tagWords.forEach(word => {
+    const test = tagLine + word + ' ';
+    if(ctx.measureText(test).width > W-80 && tagLine !== ''){
+      ctx.fillText(tagLine, 40, tagY); tagY += 36; tagLine = word + ' ';
+    } else { tagLine = test; }
+  });
+  if(tagLine) ctx.fillText(tagLine, 40, tagY);
+
+  // 구분선
+  ctx.strokeStyle = t.accent+'44';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(40, tagY+20); ctx.lineTo(W-40, tagY+20);
+  ctx.stroke();
+
+  // 링크
+  ctx.fillStyle = t.accent;
+  ctx.font = 'bold 30px sans-serif';
+  ctx.fillText('🔗 today-pick.vercel.app', 40, tagY+60);
+
+  // 다운로드
+  const link = document.createElement('a');
+  link.download = '오늘이거어때요_'+name+'.png';
+  link.href = canvas.toDataURL('image/png');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('카드 저장됐어요! 📸 인스타에 올려보세요');
+  closeShareResult();
+}
+
 function closeLevelGuide(){
   document.getElementById('levelGuideOverlay').classList.remove('show');
 }
@@ -1584,14 +1878,17 @@ function initMypage() {
     if (!history.length) {
       el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:0.85rem;">아직 기록이 없어요.<br>추천을 받아보세요! 🍽️</div>';
     } else {
-      el.innerHTML = history.map(h => `
+      el.innerHTML = history.filter(h=>!h.isBonus).map((h,i) => `
         <div class="history-item">
           <div class="history-icon">${h.emoji}</div>
           <div class="history-info">
             <div class="history-menu">${h.name}</div>
             <div class="history-date">${h.date}</div>
           </div>
-          <div class="history-rating">${h.rating}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="history-rating">${h.rating}</div>
+            <button class="btn-history-share" onclick="shareFromHistory('${h.name}','${h.emoji}')" title="공유">공유</button>
+          </div>
         </div>`).join('');
     }
     // 통계
