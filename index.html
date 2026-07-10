@@ -64,7 +64,7 @@ input,select,textarea{font-size:16px!important;} /* iOS zoom 방지 */
 .landing-title{font-family:'Do Hyeon',sans-serif;font-size:clamp(3rem,11vw,5.5rem);font-weight:400;line-height:1.1;margin-bottom:16px;white-space:nowrap;color:var(--text);}
 .landing-title span{color:var(--accent);}
 .landing-sub{font-size:1rem;color:var(--text-muted);line-height:1.75;margin-bottom:44px;}
-.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:white;border:none;padding:18px 44px;border-radius:100px;font-size:1.05rem;font-weight:700;font-family:inherit;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 6px 30px rgba(255,107,53,0.4);}
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:white;border:none;padding:18px 44px;border-radius:100px;font-size:1.05rem;font-weight:700;font-family:inherit;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 6px 30px rgba(255,107,53,0.4);}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(255,107,53,0.5);}
 .landing-login{margin-top:22px;font-size:0.85rem;color:var(--text-muted);}
 .landing-login a{color:var(--accent);text-decoration:underline;cursor:pointer;font-weight:600;}
@@ -387,8 +387,8 @@ input,select,textarea{font-size:16px!important;}
     <div class="logo-badge">🍽️ AI 메뉴 추천</div>
     <h1 class="landing-title">오늘 <span>이거</span> 어때요?</h1>
     <p class="landing-sub">날씨, 시간대, 취향을 분석해서<br>AI가 오늘 딱 맞는 한 끼를 추천해드려요.</p>
-    <button class="btn-primary" onclick="goTo('onboarding')" style="width:100%;max-width:320px;justify-content:center;">지금 바로 추천받기 →</button>
-    <button class="btn-blind" onclick="startBlindMatch()">🤝 친구랑 같이 정하기</button>
+    <button class="btn-primary" onclick="goTo('onboarding')" style="width:100%;max-width:320px;">지금 바로 추천받기 →</button>
+    <button class="btn-blind" onclick="goTo('matching-host-nickname')">🤝 친구랑 같이 정하기</button>
     <div class="landing-login">이미 계정이 있으신가요? <a onclick="goTo('auth')">로그인</a></div>
   </div>
   <div id="floatingEmojis"></div>
@@ -463,18 +463,18 @@ input,select,textarea{font-size:16px!important;}
   </div>
 </div>
 
-<!-- BLIND: HOST NICKNAME (방장 닉네임 입력) -->
+<!-- BLIND: HOST NICKNAME -->
 <div id="screen-matching-host-nickname" class="screen">
   <div class="onboarding-wrap" style="padding-top:40px;">
     <button class="back-btn" onclick="goTo('landing')">← 뒤로</button>
     <h2 class="onboard-question">이름이나 닉네임을<br>알려주세요</h2>
     <p class="onboard-hint">결과 화면에서 누가 뭘 골랐는지 보여드려요</p>
     <input id="hostNickname" type="text" placeholder="예) 다민, 짱구, 익명" style="width:100%;padding:16px;border:2px solid var(--border);border-radius:var(--radius);font-size:1rem;font-family:inherit;background:var(--surface);color:var(--text);margin-bottom:20px;outline:none;">
-    <button class="btn-primary" onclick="startHostOnboarding()" style="width:100%;justify-content:center;">선택하러 가기 →</button>
+    <button class="btn-primary" onclick="startHostOnboarding()" style="width:100%;">선택하러 가기 →</button>
   </div>
 </div>
 
-<!-- BLIND: NICKNAME (게스트 진입) -->
+<!-- BLIND: GUEST NICKNAME -->
 <div id="screen-matching-nickname" class="screen">
   <div class="onboarding-wrap" style="padding-top:40px;">
     <button class="back-btn" onclick="goTo('landing')">← 뒤로</button>
@@ -485,21 +485,21 @@ input,select,textarea{font-size:16px!important;}
     <h2 class="onboard-question">이름이나 닉네임을<br>알려주세요</h2>
     <p class="onboard-hint">결과 화면에서 누가 뭘 골랐는지 보여드려요</p>
     <input id="guestNickname" type="text" placeholder="예) 민준, 짱구, 익명" style="width:100%;padding:16px;border:2px solid var(--border);border-radius:var(--radius);font-size:1rem;font-family:inherit;background:var(--surface);color:var(--text);margin-bottom:20px;outline:none;">
-    <button class="btn-primary" onclick="startGuestOnboarding()" style="width:100%;justify-content:center;">선택하러 가기 →</button>
+    <button class="btn-primary" onclick="startGuestOnboarding()" style="width:100%;">선택하러 가기 →</button>
   </div>
 </div>
 
-<!-- BLIND: WAITING (방장 대기) -->
+<!-- BLIND: WAITING -->
 <div id="screen-matching-wait" class="screen">
-  <div class="onboarding-wrap" style="padding-top:60px;text-align:center;margin:0 auto;">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center;max-width:520px;margin:0 auto;">
     <div style="font-size:3.5rem;margin-bottom:16px;">🤝</div>
     <h2 class="onboard-question" style="margin-bottom:8px;">친구를 기다리는 중이에요</h2>
     <p class="onboard-hint" style="margin-bottom:24px;">아래 링크를 친구에게 보내주세요</p>
-    <div style="background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;text-align:left;">
+    <div style="background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;width:100%;text-align:left;">
       <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">공유 링크</p>
       <p id="matchingLink" style="font-size:0.9rem;word-break:break-all;color:var(--accent);font-weight:700;line-height:1.5;"></p>
     </div>
-    <button class="btn-primary" onclick="copyMatchingLink()" style="width:100%;justify-content:center;margin-bottom:12px;">🔗 링크 복사하기</button>
+    <button class="btn-primary" onclick="copyMatchingLink()" style="width:100%;margin-bottom:12px;">🔗 링크 복사하기</button>
     <p id="matchingStatus" style="font-size:0.85rem;color:var(--text-muted);">친구가 아직 참여하지 않았어요</p>
   </div>
 </div>
@@ -1149,15 +1149,6 @@ const steps = [
   {q:'오늘 날씨는 어떤가요?',hint:'날씨에 어울리는 음식이 따로 있어요',key:'weather',
    options:[{label:'맑음',icon:'☀️'},{label:'구름조금',icon:'⛅'},{label:'구름많음',icon:'🌥️'},{label:'흐림',icon:'☁️'},{label:'비',icon:'🌧️'},{label:'눈',icon:'🌨️'}]},
 ];
-const bmSteps = [
-  {q:'지금은 언제인가요?',hint:'식사 시간대를 선택해주세요',key:'time',multi:false,
-   options:[{label:'아침',icon:'🌅'},{label:'점심',icon:'☀️'},{label:'저녁',icon:'🌆'},{label:'간식',icon:'🧁'},{label:'야식',icon:'🌙'}]},
-  {q:'무엇을 드시고 싶나요?',hint:'여러 개 골라도 돼요 — 겹치는 걸 찾아드릴게요',key:'categories',multi:true,
-   options:[{label:'한식',icon:'🍚'},{label:'중식',icon:'🥟'},{label:'일식',icon:'🍣'},{label:'분식',icon:'🌶️'},{label:'양식',icon:'🍝'},{label:'아무거나',icon:'🎲'}]},
-  {q:'오늘 날씨는 어떤가요?',hint:'날씨에 어울리는 음식이 따로 있어요',key:'weather',multi:false,
-   options:[{label:'맑음',icon:'☀️'},{label:'구름조금',icon:'⛅'},{label:'구름많음',icon:'🌥️'},{label:'흐림',icon:'☁️'},{label:'비',icon:'🌧️'},{label:'눈',icon:'🌨️'}]},
-];
-let bmMode=false, bmCurrentStep=0, bmSelections={};
 
 let currentStep=0, stepSelections={}, currentMenu=null, retryCount=0, likedDone=false;
 let excludedMenus = []; // 제외된 메뉴 목록
@@ -1173,20 +1164,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   const menuParam = params.get('menu');
   if(menuParam){
     const found = menus.find(m=>m.name===decodeURIComponent(menuParam));
-    if(found){
-      currentMenu = found;
-      showResult();
-      return;
-    }
+    if(found){ currentMenu=found; showResult(); return; }
   }
-  // 복귀 감지 - visibilitychange + pageshow + focus 세 가지
-  const triggerReturn=()=>{
-    if(likedDone) setTimeout(()=>document.getElementById('returnModal').classList.add('show'),800);
-  };
+  // 복귀 감지
+  const triggerReturn=()=>{if(likedDone)setTimeout(()=>document.getElementById('returnModal').classList.add('show'),800);};
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')triggerReturn();});
-  window.addEventListener('pageshow', e=>{if(e.persisted)triggerReturn();});
-  window.addEventListener('focus', triggerReturn);
-
+  window.addEventListener('pageshow',e=>{if(e.persisted)triggerReturn();});
+  window.addEventListener('focus',triggerReturn);
   const retryModalEl = document.getElementById('retryModal');
   if(retryModalEl) retryModalEl.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
   const feedbackModalEl = document.getElementById('feedbackModal');
@@ -1202,52 +1186,27 @@ function initFloatingEmojis(){
   });
 }
 function initProgressBar(){
-  const arr=bmMode?bmSteps:steps;
-  document.getElementById('progressBar').innerHTML=arr.map((_,i)=>`<div class="progress-step" id="ps-${i}"></div>`).join('');
+  document.getElementById('progressBar').innerHTML=steps.map((_,i)=>`<div class="progress-step" id="ps-${i}"></div>`).join('');
 }
 function updateProgressBar(a){
-  const arr=bmMode?bmSteps:steps;
-  arr.forEach((_,i)=>{const el=document.getElementById('ps-'+i);if(el)el.className='progress-step'+(i<a?' done':i===a?' active':'');});
+  steps.forEach((_,i)=>{const el=document.getElementById('ps-'+i);if(el)el.className='progress-step'+(i<a?' done':i===a?' active':'');});
 }
 function renderStep(idx){
-  const arr=bmMode?bmSteps:steps;
-  currentStep=idx; const s=arr[idx];
+  currentStep=idx; const s=steps[idx];
   const greet=currentUser?currentUser.name+'님, ':'';
-  if(s.multi){
-    const sel=bmSelections[s.key]||[];
-    document.getElementById('onboardStep').innerHTML=`
-      <h2 class="onboard-question">${greet}${s.q}</h2>
-      <p class="onboard-hint">${s.hint}</p>
-      <div class="option-grid">${s.options.map(o=>`<button class="option-btn${sel.includes(o.label)?' selected':''}" onclick="toggleMultiOpt(this,'${s.key}','${o.label}')"><span class="opt-icon">${o.icon}</span>${o.label}</button>`).join('')}</div>
-      <button class="btn-primary" style="width:100%;margin-top:16px;justify-content:center;" onclick="confirmMultiStep('${s.key}')">선택 완료 →</button>`;
-  } else {
-    document.getElementById('onboardStep').innerHTML=`
-      <h2 class="onboard-question">${greet}${s.q}</h2>
-      <p class="onboard-hint">${s.hint}</p>
-      <div class="option-grid">${s.options.map(o=>`<button class="option-btn" onclick="selectOption(this,'${s.key}','${o.label}')"><span class="opt-icon">${o.icon}</span>${o.label}</button>`).join('')}</div>`;
-    const stored=bmMode?bmSelections[s.key]:stepSelections[s.key];
-    if(stored) document.querySelectorAll('.option-btn').forEach(b=>{if(b.textContent.trim().includes(stored))b.classList.add('selected');});
-  }
+  document.getElementById('onboardStep').innerHTML=`
+    <h2 class="onboard-question">${greet}${s.q}</h2>
+    <p class="onboard-hint">${s.hint}</p>
+    <div class="option-grid">${s.options.map(o=>`<button class="option-btn" onclick="selectOption(this,'${s.key}','${o.label}')"><span class="opt-icon">${o.icon}</span>${o.label}</button>`).join('')}</div>`;
   updateProgressBar(idx);
-}
-function toggleMultiOpt(btn,key,value){
-  btn.classList.toggle('selected');
-  if(!bmSelections[key])bmSelections[key]=[];
-  const i=bmSelections[key].indexOf(value);
-  if(i>-1)bmSelections[key].splice(i,1);else bmSelections[key].push(value);
-}
-function confirmMultiStep(key){
-  if(!bmSelections[key]||!bmSelections[key].length){showToast('하나 이상 선택해주세요!');return;}
-  if(currentStep<bmSteps.length-1)renderStep(currentStep+1);else startLoading();
+  if(stepSelections[s.key]) document.querySelectorAll('.option-btn').forEach(b=>{if(b.textContent.trim().includes(stepSelections[s.key]))b.classList.add('selected');});
 }
 function selectOption(btn,key,value){
   btn.closest('.option-grid').querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
-  if(bmMode)bmSelections[key]=value;else stepSelections[key]=value;
-  const arr=bmMode?bmSteps:steps;
-  setTimeout(()=>{ if(currentStep<arr.length-1) renderStep(currentStep+1); else startLoading(); },260);
+  btn.classList.add('selected'); stepSelections[key]=value;
+  setTimeout(()=>{ if(currentStep<steps.length-1) renderStep(currentStep+1); else startLoading(); },260);
 }
-function resetOnboarding(){currentStep=0;stepSelections={};likedDone=false;bmMode=false;bmCurrentStep=0;bmSelections={};document.getElementById('afterLike').classList.remove('visible');initProgressBar();renderStep(0);}
+function resetOnboarding(){currentStep=0;stepSelections={};likedDone=false;document.getElementById('afterLike').classList.remove('visible');initProgressBar();renderStep(0);}
 
 function startLoading(){
   goTo('loading'); likedDone=false; document.getElementById('afterLike').classList.remove('visible');
@@ -1330,7 +1289,6 @@ function pickMenu(){
 
 function showResult(){
   currentMenu=pickMenu();
-  if(bmMode||sessionStorage.getItem('bmRole')){onBlindMatchResult(currentMenu);return;}
   document.getElementById('resultEmoji').textContent=currentMenu.emoji;
   document.getElementById('resultName').textContent=currentMenu.name;
   document.getElementById('resultReason').textContent=currentMenu.reason;
@@ -1357,13 +1315,11 @@ function renderRestaurants(menu){
 }
 function openNaverMap(){
   if(!currentMenu) return;
-  if(!currentUser){ showLoginRequiredModal(); return; }
   likedDone = true;
   showToast('주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
   window.open('https://map.naver.com/v5/search/'+encodeURIComponent(currentMenu.name+' 맛집'),'_blank');
 }
 function openDelivery(p){
-  if(!currentUser){ showLoginRequiredModal(); return; }
   const urls={baemin:'https://baemin.me/',coupang:'https://m.coupangeats.com/',yogiyo:'https://m.yogiyo.co.kr/'};
   showToast('주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
   likedDone=true;
@@ -1993,35 +1949,31 @@ function refreshLocation() {
 }
 
 // ── 블라인드 매칭 ──
-function genMatchId(){return Math.random().toString(36).substr(2,9);}
-
-function canUseBlindMatch(){
-  return localStorage.getItem('bmUsed')!==new Date().toDateString();
-}
-
-function startBlindMatch(){
-  if(!canUseBlindMatch()){showToast('블라인드 매칭은 하루 1회 무료예요 🔒');return;}
-  localStorage.setItem('bmUsed',new Date().toDateString());
-  sessionStorage.setItem('bmRole','host');
-  goTo('matching-host-nickname');
-}
+let bmMode=false, bmSelections={};
+const bmSteps=[
+  {q:'지금은 언제인가요?',hint:'식사 시간대를 선택해주세요',key:'time',multi:false,
+   options:[{label:'아침',icon:'🌅'},{label:'점심',icon:'☀️'},{label:'저녁',icon:'🌆'},{label:'간식',icon:'🧁'},{label:'야식',icon:'🌙'}]},
+  {q:'무엇을 드시고 싶나요?',hint:'여러 개 골라도 돼요 — 겹치는 걸 찾아드릴게요',key:'categories',multi:true,
+   options:[{label:'한식',icon:'🍚'},{label:'중식',icon:'🥟'},{label:'일식',icon:'🍣'},{label:'분식',icon:'🌶️'},{label:'양식',icon:'🍝'},{label:'아무거나',icon:'🎲'}]},
+  {q:'오늘 날씨는 어떤가요?',hint:'날씨에 어울리는 음식이 따로 있어요',key:'weather',multi:false,
+   options:[{label:'맑음',icon:'☀️'},{label:'구름조금',icon:'⛅'},{label:'흐림',icon:'☁️'},{label:'비',icon:'🌧️'},{label:'눈',icon:'🌨️'}]},
+];
 
 function startHostOnboarding(){
   const nick=(document.getElementById('hostNickname').value.trim()||'방장');
+  sessionStorage.setItem('bmRole','host');
   sessionStorage.setItem('bmHostNick',nick);
-  bmMode=true; bmCurrentStep=0; bmSelections={};
-  initProgressBar(); renderStep(0);
+  bmMode=true; bmSelections={};
+  initBmProgressBar(); renderBmStep(0);
   goTo('onboarding');
 }
-
 function startGuestOnboarding(){
   const nick=(document.getElementById('guestNickname').value.trim()||'친구');
   sessionStorage.setItem('bmGuestNick',nick);
-  bmMode=true; bmCurrentStep=0; bmSelections={};
-  initProgressBar(); renderStep(0);
+  bmMode=true; bmSelections={};
+  initBmProgressBar(); renderBmStep(0);
   goTo('onboarding');
 }
-
 function checkBlindMatchInvite(){
   const mid=new URLSearchParams(location.search).get('match');
   if(!mid)return;
@@ -2033,13 +1985,57 @@ function checkBlindMatchInvite(){
   if(el)el.innerHTML=`<b>${hostNick}</b>님이 오늘 메뉴를 같이 정하자고 했어요!`;
   setTimeout(()=>goTo('matching-nickname'),100);
 }
-
-function onBlindMatchResult(menu){
+function initBmProgressBar(){
+  document.getElementById('progressBar').innerHTML=bmSteps.map((_,i)=>`<div class="progress-step" id="ps-${i}"></div>`).join('');
+}
+function renderBmStep(idx){
+  currentStep=idx; const s=bmSteps[idx];
+  const sel=bmSelections[s.key]||[];
+  if(s.multi){
+    document.getElementById('onboardStep').innerHTML=`
+      <h2 class="onboard-question">${s.q}</h2>
+      <p class="onboard-hint">${s.hint}</p>
+      <div class="option-grid">${s.options.map(o=>`<button class="option-btn${sel.includes(o.label)?' selected':''}" onclick="toggleBmOpt(this,'${s.key}','${o.label}')"><span class="opt-icon">${o.icon}</span>${o.label}</button>`).join('')}</div>
+      <button class="btn-primary" style="width:100%;margin-top:16px;" onclick="confirmBmMulti('${s.key}')">선택 완료 →</button>`;
+  } else {
+    document.getElementById('onboardStep').innerHTML=`
+      <h2 class="onboard-question">${s.q}</h2>
+      <p class="onboard-hint">${s.hint}</p>
+      <div class="option-grid">${s.options.map(o=>`<button class="option-btn${bmSelections[s.key]===o.label?' selected':''}" onclick="selectBmOpt(this,'${s.key}','${o.label}')"><span class="opt-icon">${o.icon}</span>${o.label}</button>`).join('')}</div>`;
+  }
+  // progress bar
+  bmSteps.forEach((_,i)=>{const el=document.getElementById('ps-'+i);if(el)el.className='progress-step'+(i<idx?' done':i===idx?' active':'');});
+}
+function toggleBmOpt(btn,key,val){
+  btn.classList.toggle('selected');
+  if(!bmSelections[key])bmSelections[key]=[];
+  const i=bmSelections[key].indexOf(val);
+  if(i>-1)bmSelections[key].splice(i,1); else bmSelections[key].push(val);
+}
+function confirmBmMulti(key){
+  if(!bmSelections[key]||!bmSelections[key].length){showToast('하나 이상 선택해주세요!');return;}
+  if(currentStep<bmSteps.length-1)renderBmStep(currentStep+1); else startBmLoading();
+}
+function selectBmOpt(btn,key,val){
+  btn.closest('.option-grid').querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected'); bmSelections[key]=val;
+  setTimeout(()=>{if(currentStep<bmSteps.length-1)renderBmStep(currentStep+1); else startBmLoading();},260);
+}
+function startBmLoading(){
+  goTo('loading');
+  document.getElementById('loadingText').textContent='취향을 합치는 중이에요';
+  const tags=['취향 분석','메뉴 매칭','최적 선택'];
+  const c=document.getElementById('loadingTags'); c.innerHTML='';
+  tags.forEach((t,i)=>setTimeout(()=>{const el=document.createElement('div');el.className='ltag';el.textContent='✓ '+t;c.appendChild(el);},i*520));
+  setTimeout(finishBmResult,2200);
+}
+function finishBmResult(){
+  const menu=pickMenu();
   const role=sessionStorage.getItem('bmRole');
   const mid=sessionStorage.getItem('bmMatchId');
   bmMode=false;
   if(role==='host'){
-    const newId=genMatchId();
+    const newId=Math.random().toString(36).substr(2,9);
     sessionStorage.setItem('bmMatchId',newId);
     const nick=sessionStorage.getItem('bmHostNick')||'방장';
     localStorage.setItem('bm_host_'+newId,JSON.stringify({menu:menu.name,emoji:menu.emoji,reason:menu.reason,category:menu.category||'',nick,ts:Date.now()}));
@@ -2047,9 +2043,7 @@ function onBlindMatchResult(menu){
     document.getElementById('matchingLink').textContent=location.origin+location.pathname+'?match='+newId;
     document.getElementById('matchingStatus').textContent='친구가 아직 참여하지 않았어요';
     goTo('matching-wait');
-    const poll=setInterval(()=>{
-      if(localStorage.getItem('bm_guest_'+newId)){clearInterval(poll);showBlindResult(newId);}
-    },3000);
+    const poll=setInterval(()=>{if(localStorage.getItem('bm_guest_'+newId)){clearInterval(poll);showBlindResult(newId);}},3000);
   } else if(role==='guest'){
     sessionStorage.removeItem('bmRole');
     const nick=sessionStorage.getItem('bmGuestNick')||'친구';
@@ -2057,12 +2051,11 @@ function onBlindMatchResult(menu){
     showBlindResult(mid);
   }
 }
-
 function showBlindResult(mid){
   const h=localStorage.getItem('bm_host_'+mid);
   const g=localStorage.getItem('bm_guest_'+mid);
   if(!h||!g)return;
-  const hd=JSON.parse(h), gd=JSON.parse(g);
+  const hd=JSON.parse(h),gd=JSON.parse(g);
   const picked=Math.random()>0.5?hd:gd;
   document.getElementById('matchResultEmoji').textContent=picked.emoji;
   document.getElementById('matchResultName').textContent=picked.menu;
@@ -2076,48 +2069,35 @@ function showBlindResult(mid){
   document.getElementById('btnMatchLike').textContent='👍 이거 좋아요!';
   goTo('matching-result');
 }
-
-function retryBlindMatch(){
-  // 기존 매칭 초기화 후 방장 닉네임 화면으로
-  bmMode=false; bmCurrentStep=0; bmSelections={};
-  sessionStorage.removeItem('bmRole');
-  sessionStorage.removeItem('bmMatchId');
-  startBlindMatch();
-}
-
 function copyMatchingLink(){
-  navigator.clipboard.writeText(document.getElementById('matchingLink').textContent)
+  const link=document.getElementById('matchingLink').textContent;
+  navigator.clipboard.writeText(link)
     .then(()=>showToast('링크가 복사됐어요! 친구에게 보내보세요 🔗'))
-    .catch(()=>{
-      // 클립보드 API 실패 시 fallback
-      const el=document.createElement('textarea');
-      el.value=document.getElementById('matchingLink').textContent;
-      document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);
-      showToast('링크가 복사됐어요! 친구에게 보내보세요 🔗');
-    });
+    .catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('링크가 복사됐어요! 친구에게 보내보세요 🔗');});
 }
-
 function onMatchLike(){
   document.getElementById('afterMatchLike').classList.add('visible');
   document.getElementById('btnMatchLike').disabled=true;
   document.getElementById('btnMatchLike').textContent='✓ 좋아요 완료';
   likedDone=true;
 }
-
 function openDeliveryMatch(p){
   const urls={baemin:'https://baemin.me/',coupang:'https://m.coupangeats.com/',yogiyo:'https://m.yogiyo.co.kr/'};
-  likedDone=true;
-  showToast('주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
+  likedDone=true; showToast('주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
   window.open(urls[p],'_blank');
 }
-
 function openNaverMapMatch(){
   if(!currentMenu)return;
   likedDone=true;
   window.open('https://map.naver.com/v5/search/'+encodeURIComponent(currentMenu.name+' 맛집'),'_blank');
 }
+function retryBlindMatch(){
+  bmMode=false; bmSelections={};
+  sessionStorage.removeItem('bmRole'); sessionStorage.removeItem('bmMatchId');
+  goTo('matching-host-nickname');
+}
 
-// ── NAV ──
+// NAV
 let currentScreen='landing';
 function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');currentScreen=id;window.scrollTo(0,0);if(id==='mypage'){initMypage();setTimeout(()=>{const h=JSON.parse(localStorage.getItem(historyKey())||'[]');const pct=Math.min(100,Math.round((h.length/300)*100));document.getElementById('tasteFill').style.width=pct+'%';},200);}}
 function goBack(){if(currentStep>0)renderStep(currentStep-1);else goTo('landing');}
