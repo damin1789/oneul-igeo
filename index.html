@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>오늘 이거 어때요 — AI 메뉴 추천</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#ff6b35">
@@ -22,7 +22,7 @@
   --shadow:0 4px 24px rgba(255,107,53,0.1);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;padding-top:env(safe-area-inset-top);}
 
 /* ── MOBILE FIRST ── */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth;}
@@ -215,8 +215,12 @@ input,select,textarea{font-size:16px!important;} /* iOS zoom 방지 */
 .find-hint strong{color:var(--accent);}
 .share-section{margin-top:16px;text-align:center;padding:16px 0;}
 .share-label{font-size:0.73rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;}
-.btn-friend-match-entry{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;background:transparent;color:var(--accent);border:1.5px solid var(--accent);padding:16px 42px;border-radius:100px;font-size:0.95rem;font-weight:700;font-family:inherit;cursor:pointer;transition:background 0.15s;}
-.btn-friend-match-entry:hover{background:rgba(255,107,53,0.08);}
+.onboard-match-promo{margin-top:28px;}
+.onboard-match-divider{display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--text-dim);font-size:0.75rem;}
+.onboard-match-divider::before,.onboard-match-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.btn-friend-match-onboard{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:var(--radius);border:1.5px solid var(--accent);background:rgba(255,107,53,0.05);color:var(--accent);font-size:0.88rem;font-weight:700;font-family:inherit;cursor:pointer;}
+.btn-friend-match-onboard:hover{background:rgba(255,107,53,0.1);}
+.btn-friend-match-onboard .premium-badge{font-size:0.58rem;padding:1px 7px;}
 .btn-text-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:100px;border:none;background:none;color:var(--text-muted);font-size:0.82rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background 0.15s,color 0.15s;}
 .btn-text-ghost:hover{background:rgba(255,107,53,0.08);color:var(--accent);}
 .premium-badge{background:linear-gradient(135deg,#8338EC,#3A86FF);color:white;font-size:0.62rem;font-weight:800;letter-spacing:0.05em;padding:2px 8px;border-radius:100px;}
@@ -302,7 +306,7 @@ input,select,textarea{font-size:16px!important;} /* iOS zoom 방지 */
 .avatar-bg-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;}
 .avatar-bg-opt{width:100%;aspect-ratio:1;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all 0.15s;min-width:0;}
 .avatar-bg-opt:hover,.avatar-bg-opt.selected{border-color:var(--text);transform:scale(1.1);}
-.avatar-picker-wrap{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px;}
+.avatar-picker-wrap{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:16px;max-height:280px;overflow-y:auto;}
 .avatar-picker-title{font-size:0.78rem;font-weight:700;color:var(--text-muted);margin-bottom:10px;}
 .avatar-picker-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
 .avatar-opt{background:none;border:2px solid transparent;border-radius:10px;font-size:1.8rem;cursor:pointer;padding:6px;transition:all 0.15s;line-height:1;}
@@ -454,7 +458,6 @@ input,select,textarea{font-size:16px!important;}
     <h1 class="landing-title">오늘 <span>이거</span> 어때요?</h1>
     <p class="landing-sub">결정 장애 끝. 단 30초 안에<br>AI가 딱 맞는 한 끼를 찾아드려요.</p>
     <button class="btn-primary" onclick="goTo('onboarding')">지금 바로 추천받기 →</button>
-    <button class="btn-friend-match-entry" onclick="openFriendMatch()">👥 친구랑 같이 메뉴 정하기 <span class="premium-badge" id="friendMatchBadge">PREMIUM</span></button>
     <div class="landing-login">이미 계정이 있으신가요? <a onclick="goTo('auth')">로그인</a></div>
   </div>
 </div>
@@ -778,7 +781,7 @@ input,select,textarea{font-size:16px!important;}
 <!-- 친구랑 같이 정하기 (프리미엄) -->
 <div id="screen-match" class="screen">
   <div class="auth-wrap" style="padding-bottom:40px;">
-    <button class="back-btn" onclick="goTo('landing')">← 뒤로</button>
+    <button class="back-btn" onclick="goTo('onboarding')">← 뒤로</button>
     <div class="auth-logo" style="font-size:1.6rem;">👥 친구랑 같이 정하기</div>
     <p class="auth-sub" id="matchIntro">각자 괜찮은 카테고리를 고르면, 겹치는 메뉴를 추천해드려요.<br><span style="color:var(--accent);font-weight:700;">PREMIUM 기능 · 무료 체험 중</span></p>
     <div id="matchCategoryPicker" class="option-grid"></div>
@@ -1159,12 +1162,18 @@ function updateProgressBar(a){
 function renderStep(idx){
   currentStep=idx; const s=steps[idx];
   const greet=currentUser?currentUser.name+'님, ':'';
+  const matchPromo = idx===0 ? `
+    <div class="onboard-match-promo">
+      <div class="onboard-match-divider"><span>또는</span></div>
+      <button class="btn-friend-match-onboard" onclick="openFriendMatch()">👥 친구랑 같이 메뉴 정하기 <span class="premium-badge" id="friendMatchBadge">PREMIUM</span></button>
+    </div>` : '';
   document.getElementById('onboardStep').innerHTML=`
     <h2 class="onboard-question">${greet}${s.q}</h2>
     <p class="onboard-hint">${s.hint}</p>
-    <div class="option-grid">${s.options.map(o=>`<button class="option-btn" onclick="selectOption(this,'${s.key}','${o.label}')"><span class="opt-icon">${o.icon}</span>${o.label}</button>`).join('')}</div>`;
+    <div class="option-grid">${s.options.map(o=>`<button class="option-btn" onclick="selectOption(this,'${s.key}','${o.label}')"><span class="opt-icon">${o.icon}</span>${o.label}</button>`).join('')}</div>${matchPromo}`;
   updateProgressBar(idx);
   if(stepSelections[s.key]) document.querySelectorAll('.option-btn').forEach(b=>{if(b.textContent.trim().includes(stepSelections[s.key]))b.classList.add('selected');});
+  if(idx===0) updateFriendMatchBadge();
 }
 function selectOption(btn,key,value){
   btn.closest('.option-grid').querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
@@ -1239,8 +1248,13 @@ function openNaverMap(){
 }
 function openDelivery(p){
   if(!currentUser){ showLoginRequiredModal(); return; }
-  const urls={baemin:'https://baemin.me/',coupang:'https://m.coupangeats.com/',yogiyo:'https://m.yogiyo.co.kr/'};
-  showToast('주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
+  // 세 곳 다 실제 주소로 확인함(2026-07 기준):
+  // - 배민은 소비자 주문 자체가 앱 전용이라 검색 딥링크가 없음 → 공식 홈으로 이동, 앱에서 직접 검색 안내
+  // - 쿠팡이츠도 실제 주문은 앱 중심이라 공식 사이트로 이동
+  // - 요기요는 모바일웹 주문이 실제로 가능해서 모바일웹 주소로 연결
+  const urls={baemin:'https://www.baemin.com/',coupang:'https://www.coupangeats.com/',yogiyo:'https://www.yogiyo.co.kr/mobile/'};
+  const menuName = currentMenu ? currentMenu.name : '';
+  showToast(menuName ? `앱에서 "${menuName}" 검색해서 주문해보세요! 🍽️` : '주문 후 돌아오시면 취향 지도가 채워져요! 🎯');
   likedDone=true;
   window.open(urls[p],'_blank');
 }
@@ -1356,7 +1370,7 @@ function showLoginRequiredModal(){
 // 공유 함수
 function getShareText(){
   const menu = currentMenu ? currentMenu.name : '오늘의 메뉴';
-  return `오늘 뭐 먹을지 고민했는데 "${menu}" 추천받았어요 🍽️\n나도 해봐! → https://today-pick.vercel.app`;
+  return `오늘 뭐 먹을지 고민했는데 "${menu}" 추천받았어요 🍽️\n같이 해보자! → https://today-pick.vercel.app`;
 }
 function shareKakao(){
   const text = getShareText();
@@ -2193,7 +2207,7 @@ function renderCalendarHeatmap(history){
   grid.innerHTML = html;
 }
 
-const avatarEmojis = ['🍜','🍕','🍗','🍣','🥗','🍔','🌮','🍱','🥘','🍲','🍛','🍝','🥩','🍖','🦞','🍤','🥟','🍢','🧆','🥙','🌯','🥪','🍞','🧇','🥞','🍩','🍦','🎂','🧁','☕'];
+const avatarEmojis = ['🍜','🍕','🍗','🍣','🥗','🍔','🌮','🍱','🍲','🥙','🍞','🥞','🍩','🍦','🎂','🧁','☕','🍤'];
 const avatarBgs = [
   'linear-gradient(135deg,#FF6B6B,#FFD93D)',
   'linear-gradient(135deg,#FF6B6B,#4D96FF)',
@@ -2323,7 +2337,6 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 
 // 이미 로그인된 경우 바텀 네비 표시
 if(currentUser) document.addEventListener('DOMContentLoaded',()=>document.getElementById('bottomNav').classList.add('visible'));
-document.addEventListener('DOMContentLoaded', updateFriendMatchBadge);
 
 // ── PWA: 서비스워커 등록 + 홈 화면 설치 유도 ──
 if('serviceWorker' in navigator){
