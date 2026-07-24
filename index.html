@@ -1339,15 +1339,19 @@ function afterLogin(){
   showToast(currentUser.name+'님, 환영해요! 🎉');
   checkBirthday();
 
-  // 로그인 전 결과가 있으면 그 결과 화면으로, 없으면 온보딩
+  // 로그인 전 화면으로 돌아가기 — 친구매칭 결과 화면에서 로그인했으면 거기로,
+  // 그게 아니고 결과가 있으면 일반 결과 화면으로, 없으면 온보딩으로
   setTimeout(() => {
-    if (currentMenu) {
+    if (preLoginScreen === 'match') {
+      goTo('match');
+    } else if (currentMenu) {
       goTo('result');
     } else if (Object.keys(stepSelections).length > 0) {
       startLoading();
     } else {
       goTo('onboarding');
     }
+    preLoginScreen = null;
   }, 900);
 }
 
@@ -1363,7 +1367,9 @@ function updateMypageName(){
 
 // 주문 버튼 — 비로그인 시 로그인 유도 (위에서 처리됨)
 
+let preLoginScreen = null;
 function showLoginRequiredModal(){
+  preLoginScreen = currentScreen;
   document.getElementById('loginRequiredModal').classList.add('show');
 }
 
@@ -1381,7 +1387,12 @@ function shareKakao(){
   }
 }
 function shareInsta(){
-  copyTextToClipboard(getShareText(), '복사됐어요! 인스타에 붙여넣기 해보세요 📸');
+  const text = getShareText();
+  if(navigator.share){
+    navigator.share({title:'오늘 이거 어때요?', text}).catch(()=>{});
+  } else {
+    copyTextToClipboard(text, '복사됐어요! 인스타에 붙여넣기 해보세요 📸');
+  }
 }
 function shareTwitter(){
   window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(getShareText()),'_blank');
