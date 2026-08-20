@@ -131,6 +131,18 @@ input,select,textarea{font-size:16px!important;} /* iOS zoom 방지 */
 .result-hero-emoji{font-size:6rem;animation:heroFloat 3s ease-in-out infinite;}
 @keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .result-hero-glow{position:absolute;width:180px;height:180px;background:radial-gradient(circle,rgba(255,180,80,0.3) 0%,transparent 70%);border-radius:50%;}
+.runner-up{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+.runner-up-label{font-size:0.78rem;color:var(--text-dim);}
+.runner-up-item{background:var(--surface2);border:1.5px solid var(--border);border-radius:100px;padding:7px 14px;font-size:0.82rem;font-family:inherit;color:var(--text-muted);cursor:pointer;transition:all 0.18s;}
+.runner-up-item:hover{border-color:var(--accent);color:var(--accent);background:rgba(255,107,53,0.08);}
+.snack-tip{max-width:520px;margin:18px auto 0;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;font-size:0.82rem;color:var(--text-muted);line-height:1.6;}
+.snack-tip b{color:var(--text);}
+.today-summary{max-width:520px;margin:14px auto 0;padding:16px;background:linear-gradient(135deg,#fff3e8,#ffe8d4);border:1px solid var(--border);border-radius:14px;}
+.today-summary-title{font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+.today-summary-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.today-summary-tag{background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:100px;font-size:0.76rem;color:var(--text-muted);}
+.today-summary-cta{font-size:0.78rem;color:var(--text-muted);}
+.today-summary-cta a{color:var(--accent);font-weight:700;text-decoration:underline;cursor:pointer;}
 .weather-badge{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.8);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.9);padding:5px 12px;border-radius:100px;font-size:0.75rem;color:var(--text-muted);font-weight:600;}
 .result-info{padding:22px;}
 .result-menu-name{font-family:'Do Hyeon',sans-serif;font-size:2.2rem;margin-bottom:10px;}
@@ -442,6 +454,14 @@ input,select,textarea{font-size:16px!important;}
 }
 </style>
 <script defer src="/_vercel/insights/script.js"></script>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-12RH5EZQW6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-12RH5EZQW6');
+</script>
 <!--
   TODO(애드센스 1차 BM): Google AdSense 계정이 승인되면 아래 스크립트의
   주석을 풀고 ca-pub-XXXXXXXXXXXXXXXX를 실제 발행자(publisher) ID로 바꾸세요.
@@ -497,6 +517,11 @@ input,select,textarea{font-size:16px!important;}
         <h2 class="result-menu-name" id="resultName">떡볶이</h2>
         <div class="result-reason" id="resultReason">달콤 매콤한 소스가 딱이에요.</div>
         <div class="result-tags" id="resultTags"></div>
+        <div class="runner-up" id="runnerUpSlot" style="display:none">
+          <span class="runner-up-label">이것도 후보였어요</span>
+          <button class="runner-up-item" id="runnerUpBtn0" onclick="switchToRunnerUp(0)"></button>
+          <button class="runner-up-item" id="runnerUpBtn1" onclick="switchToRunnerUp(1)"></button>
+        </div>
       </div>
     </div>
     <div class="action-row">
@@ -522,6 +547,12 @@ input,select,textarea{font-size:16px!important;}
         </button>
       </div>
     </div>
+
+    <!-- 야식 꿀팁 — 고정 정보성 콘텐츠 (실사용 데이터 아님, 매번 랜덤 노출) -->
+    <div class="snack-tip" id="snackTip"></div>
+
+    <!-- 비로그인 사용자용 오늘의 선택 요약 — '취향 지도'처럼 축적된 데이터인 척 하지 않고, 오늘 세션 결과임을 명시 -->
+    <div class="today-summary" id="todaySummary" style="display:none"></div>
 
     <!--
       TODO(애드센스 1차 BM): 계정 승인 후 아래 주석을 풀고
@@ -1132,7 +1163,13 @@ const steps = [
    options:[{label:'맑음',icon:'☀️'},{label:'구름조금',icon:'⛅'},{label:'구름많음',icon:'🌥️'},{label:'흐림',icon:'☁️'},{label:'비',icon:'🌧️'},{label:'눈',icon:'🌨️'}]},
 ];
 
-let currentStep=0, stepSelections={}, currentMenu=null, retryCount=0, likedDone=false;
+let currentStep=0, stepSelections={}, currentMenu=null, currentRunnerUps=[], retryCount=0, likedDone=false;
+let sessionPicks=[]; // 오늘의 선택 요약용 — 이번 세션에서 실제로 나온 메뉴 기록 (세션 한정, 축적 아님)
+// '다시 추천' 사유를 실제 추천 로직에 반영하기 위한 세션 내 상태
+let excludedMenuNames = new Set();   // 이미 최근에 먹었어요 / 가격 부담 등 → 이 메뉴만 제외
+let excludedCategories = new Set();  // 별로 당기지 않아요 → 같은 카테고리 제외
+let avoidSpicy = false;              // 너무 맵거나 자극적이에요 → 매운맛 낮은 것 위주
+let preferLight = false;             // 더 가볍게 먹고 싶어요 → 가벼운 것 위주
 
 document.addEventListener('DOMContentLoaded',()=>{
   initFloatingEmojis(); initProgressBar(); renderStep(0); initMypage(); updateMypageName();
@@ -1178,9 +1215,10 @@ function renderStep(idx){
 function selectOption(btn,key,value){
   btn.closest('.option-grid').querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected'); stepSelections[key]=value;
+  if(currentStep===steps.length-1){ gtag('event','menu_selected'); }
   setTimeout(()=>{ if(currentStep<steps.length-1) renderStep(currentStep+1); else startLoading(); },260);
 }
-function resetOnboarding(){currentStep=0;stepSelections={};likedDone=false;document.getElementById('afterLike').classList.remove('visible');initProgressBar();renderStep(0);}
+function resetOnboarding(){currentStep=0;stepSelections={};likedDone=false;excludedMenuNames=new Set();excludedCategories=new Set();avoidSpicy=false;preferLight=false;document.getElementById('afterLike').classList.remove('visible');initProgressBar();renderStep(0);}
 
 function startLoading(){
   goTo('loading'); likedDone=false; document.getElementById('afterLike').classList.remove('visible');
@@ -1207,17 +1245,128 @@ function pickMenu(){
   if((season==='겨울'||weather==='눈'||weather==='흐림')&&pool.length>3){const wf=pool.filter(m=>m.lightness>=3);if(wf.length)pool=wf;}
   if(weather==='비'&&pool.length>3){const sf=pool.filter(m=>m.spicy>=3);if(sf.length)pool=sf;}
   if(!pool.length) pool=menus;
+  // '다시 추천' 사유를 실제로 반영: 최근에 먹은/부담스러운 메뉴, 같은 카테고리 제외
+  let excluded=pool.filter(m=>!excludedMenuNames.has(m.name) && !excludedCategories.has(m.category));
+  if(excluded.length) pool=excluded;
+  if(avoidSpicy){ const nf=pool.filter(m=>m.spicy<=2); if(nf.length) pool=nf; }
+  if(preferLight){ const nf=pool.filter(m=>m.lightness<=2); if(nf.length) pool=nf; }
   // 랜덤성 추가 (retryCount로 다른 메뉴)
   const idx=(retryCount + Math.floor(Math.random()*pool.length)) % pool.length;
-  return pool[idx];
+  const picked = pool[idx];
+  // 후보 슬롯 — 같은 필터를 통과한 다른 후보 2개를 정직하게 보여줌 (순위가 아니라 후보군)
+  const others = pool.filter(m=>m.name!==picked.name);
+  const shuffled = [...others].sort(()=>Math.random()-0.5);
+  currentRunnerUps = shuffled.slice(0,2);
+  return picked;
 }
 
-function showResult(){
-  currentMenu=pickMenu();
+// 시간대별 꿀팁 — 특정 메뉴 종류(국물/튀김 등)를 단정하지 않도록 범용 문구로 구성, 카테고리마다 '공유' 유도 포함
+const snackTips = {
+  '아침': [
+    '☀️ <b>오늘 하루의 첫 끼, 잘 골랐어요</b> — 아침을 챙기면 하루가 든든해져요.',
+    '📸 <b>아침 메뉴, 친구에게도 공유해보세요</b> — "나 오늘 이거 먹어" 자랑하는 재미도 있어요.',
+    '🍽️ <b>천천히 먹어도 괜찮아요</b> — 오늘 하루의 첫 여유니까요.',
+    '☕ <b>카페인은 식사 후에</b> — 빈 속보다 속이 편안해요.',
+  ],
+  '점심': [
+    '🍚 <b>점심은 오늘 하루의 에너지원</b> — 대충 때우기 아깝잖아요.',
+    '👥 <b>동료랑 같이 골라보세요</b> — 점심 메뉴 고민, 나눌수록 가벼워져요.',
+    '🚶 <b>식후엔 잠깐 산책</b> — 오후 나른함이 확 줄어들어요.',
+    '📤 <b>이 추천, 옆자리 동료한테도 보내보세요</b> — "오늘 뭐 먹지" 고민, 같이 해결해요.',
+  ],
+  '저녁': [
+    '🍽️ <b>저녁은 하루를 마무리하는 시간</b> — 오늘도 고생한 나에게 잘 차려주세요.',
+    '👨‍👩‍👧 <b>같이 먹으면 두 배 맛있어요</b> — 오늘 저녁엔 누구랑 드세요?',
+    '📱 <b>이 메뉴, 같이 먹을 사람한테 공유해보세요</b> — "이거 어때?" 한마디면 저녁 메뉴 고민 끝이에요.',
+    '🕯️ <b>가끔은 예쁘게 차려서</b> — 별거 아닌 저녁도 특별해져요.',
+  ],
+  '간식': [
+    '🍪 <b>간식은 언제나 옳아요</b> — 오후의 작은 행복이니까요.',
+    '🎁 <b>친구한테 "이거 먹을래?" 공유해보세요</b> — 같이 먹는 간식이 더 맛있어요.',
+    '🎧 <b>좋아하는 노래 들으면서</b> — 간식 타임이 힐링 타임이 돼요.',
+    '🧋 <b>당 떨어질 땐 참지 말기</b> — 지금이 딱 그 타이밍이에요.',
+  ],
+  '야식': [
+    '🌙 <b>야식은 원래 낭만이죠</b> — 오늘 하루 고생한 나에게 주는 작은 선물이에요.',
+    '📺 <b>먹방 보면서 먹으면 두 배 맛있어요</b> — 같이 먹는 느낌이 은근 중요해요.',
+    '👯 <b>같이 야식 먹을 사람 구함</b> — 이 추천, 지금 친구한테 공유해보세요.',
+    '🌃 <b>늦은 밤, 다 같이 먹는 재미</b> — 이 메시지 하나로 모임이 시작될 수도 있어요.',
+    '🎲 <b>오늘은 이 메뉴, 내일은 또 다른 메뉴</b> — 매일 다르게 즐기는 재미가 있어요.',
+    '💬 <b>"이거 시킬까?" 한마디면 시작</b> — 야식은 항상 즉흥이 제맛이에요.',
+  ],
+};
+function renderSnackTip(){
+  const el = document.getElementById('snackTip');
+  if(!el) return;
+  const pool = snackTips[stepSelections.time] || [].concat(...Object.values(snackTips));
+  el.innerHTML = pool[Math.floor(Math.random()*pool.length)];
+}
+
+// 비로그인 사용자에게 '오늘의 선택 요약' — 축적된 취향 데이터인 척 하지 않고 이번 세션 기록만 정직하게 표시
+function renderTodaySummary(){
+  const el = document.getElementById('todaySummary');
+  if(!el) return;
+  if(currentUser || sessionPicks.length===0){ el.style.display='none'; return; }
+  const catCount={};
+  sessionPicks.forEach(m=>{ catCount[m.category]=(catCount[m.category]||0)+1; });
+  const topCat = Object.entries(catCount).sort((a,b)=>b[1]-a[1])[0]?.[0];
+  const avgSpicy = sessionPicks.reduce((s,m)=>s+m.spicy,0)/sessionPicks.length;
+  const tags=[];
+  if(topCat) tags.push('#오늘은_'+topCat+'_계열');
+  if(avgSpicy>=3) tags.push('#매콤한_거_선호');
+  else if(avgSpicy<=1.5) tags.push('#순한맛_선호');
+  tags.push('#오늘_'+sessionPicks.length+'번_추천받음');
+  el.innerHTML = `
+    <div class="today-summary-title">오늘의 선택 요약</div>
+    <div class="today-summary-tags">${tags.map(t=>`<span class="today-summary-tag">${t}</span>`).join('')}</div>
+    <div class="today-summary-cta">이번 세션에서 고른 결과예요. <a onclick="goTo('auth')">로그인하면 계속 기록이 쌓여요 →</a></div>`;
+  el.style.display='block';
+}
+
+function renderRunnerUp(){
+  const slot=document.getElementById('runnerUpSlot');
+  if(!currentRunnerUps.length){ slot.style.display='none'; return; }
+  [0,1].forEach(i=>{
+    const btn=document.getElementById('runnerUpBtn'+i);
+    const cand=currentRunnerUps[i];
+    if(!cand){ btn.style.display='none'; return; }
+    btn.style.display='inline-block';
+    btn.innerHTML = `${cand.emoji} ${cand.name}${roParticle(cand.name)} 바꿔볼까요?`;
+  });
+  slot.style.display='flex';
+}
+// 한글 단어 받침 유무에 따라 '로'/'으로' 조사를 정확히 붙여줌
+function roParticle(word){
+  const last = word[word.length-1];
+  const code = last.charCodeAt(0) - 0xAC00;
+  if(code < 0 || code > 11171) return '로'; // 한글 아니면 기본값
+  const jong = code % 28;
+  return (jong===0 || jong===8) ? '로' : '으로'; // 받침 없음 또는 'ㄹ'받침이면 '로'
+}
+// 후보 메뉴로 전환 — currentMenu와 선택한 후보를 맞바꾸고, 남은 자리는 이전 메인 메뉴로 채움
+function switchToRunnerUp(i){
+  const cand=currentRunnerUps[i];
+  if(!cand) return;
+  const prevMain=currentMenu;
+  currentMenu=cand;
+  currentRunnerUps[i]=prevMain;
+  gtag('event','runner_up_selected',{menu: currentMenu.name});
+  renderMainMenuUI();
+}
+
+function renderMainMenuUI(){
   document.getElementById('resultEmoji').textContent=currentMenu.emoji;
   document.getElementById('resultName').textContent=currentMenu.name;
   document.getElementById('resultReason').textContent=currentMenu.reason;
   document.getElementById('resultTags').innerHTML=currentMenu.tags.map(t=>`<span class="rtag">${t}</span>`).join('');
+  renderRunnerUp();
+  renderRestaurants(currentMenu);
+}
+
+function showResult(){
+  currentMenu=pickMenu();
+  sessionPicks.push(currentMenu);
+  renderMainMenuUI();
   const wi={'맑음':'☀️','구름조금':'⛅','구름많음':'🌥️','흐림':'☁️','비':'🌧️','눈':'🌨️'}[stepSelections.weather]||'🌤️';
   document.getElementById('weatherBadge').textContent=`${wi} ${stepSelections.weather||'맑음'} · ${stepSelections.time||'저녁'}`;
   const sm=[
@@ -1228,12 +1377,15 @@ function showResult(){
     {key:'weather',icons:{'맑음':'☀️','구름조금':'⛅','구름많음':'🌥️','흐림':'☁️','비':'🌧️','눈':'🌨️'}},
   ];
   document.getElementById('selectionSummary').innerHTML=sm.filter(s=>stepSelections[s.key]).map(s=>{const v=stepSelections[s.key];return`<div class="sel-chip"><span class="chip-icon">${s.icons[v]||''}</span><span class="chip-label">${v}</span></div>`;}).join('');
-  renderRestaurants(currentMenu);
   document.getElementById('socialNum').textContent=(80+Math.floor(Math.random()*250))+'명';
   document.getElementById('btnLike').disabled=false;
   document.getElementById('btnLike').textContent='👍 이거 좋아요!';
+  renderSnackTip();
+  renderTodaySummary();
+  gtag('event','match_completed',{result_menu: currentMenu.name});
   goTo('result');
 }
+
 
 function renderRestaurants(menu){
   const el = document.getElementById('findMenuName');
@@ -1269,14 +1421,34 @@ function onLike(){
   window._returnTimer = setInterval(rotateReturnMessage, 4000);
 }
 
-// RETRY
+// RETRY — 고른 사유를 실제 추천 로직에 반영
 let selectedRetryReason='';
 function showRetryModal(){document.getElementById('retryModal').classList.add('show');selectedRetryReason='';document.getElementById('retryEtcInput').value='';document.querySelectorAll('.retry-opt').forEach(b=>b.classList.remove('selected'));}
 function selectRetryReason(btn){document.querySelectorAll('.retry-opt').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');selectedRetryReason=btn.textContent.trim();}
+const retryReasonLoadingMsg = {
+  '별로 당기지 않아요':'비슷한 종류는 빼고 다시 찾는 중',
+  '이미 최근에 먹었어요':'최근 메뉴는 빼고 다시 찾는 중',
+  '가격이 부담스러워요':'부담 없는 메뉴로 다시 찾는 중',
+  '너무 맵거나 자극적이에요':'맵지 않은 메뉴 위주로 다시 찾는 중',
+  '더 가볍게 먹고 싶어요':'더 가벼운 메뉴 위주로 다시 찾는 중',
+};
 function confirmRetry(){
+  const reason = selectedRetryReason;
+  gtag('event','retry_requested',{reason});
+  // 사유를 실제 필터로 반영 (문구만 있고 로직이 없던 부분 보완)
+  if(currentMenu){
+    if(reason.includes('당기지')) excludedCategories.add(currentMenu.category);
+    else if(reason.includes('최근')) excludedMenuNames.add(currentMenu.name);
+    else if(reason.includes('부담')) excludedMenuNames.add(currentMenu.name);
+    else if(reason.includes('맵')) avoidSpicy = true;
+    else if(reason.includes('가볍게')) preferLight = true;
+    else if(reason) excludedMenuNames.add(currentMenu.name); // 기타 직접입력 등 fallback
+  }
   document.getElementById('retryModal').classList.remove('show');
   retryCount++; likedDone=false; document.getElementById('afterLike').classList.remove('visible');
   goTo('loading'); document.getElementById('loadingTags').innerHTML='';
+  const reasonKey = Object.keys(retryReasonLoadingMsg).find(k=>reason.includes(k));
+  document.getElementById('loadingText').textContent = reasonKey ? retryReasonLoadingMsg[reasonKey] : 'AI가 다시 분석 중이에요';
   setTimeout(showResult,1400);
 }
 
@@ -1824,6 +1996,7 @@ function doSignup(){
   const pushPref = collectPushPref('signupPushDay', 'signupPushCustomDays', 'signupPushTimeOptions');
   localStorage.setItem('igeo_push_pref', JSON.stringify(pushPref));
   afterLogin();
+  gtag('event','signup_completed');
   requestPushPermission(false);
 }
 
