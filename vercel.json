@@ -4,9 +4,17 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "og.png",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/og.png",
+      "dest": "/og.png"
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"
